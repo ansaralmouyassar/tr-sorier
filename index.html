@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Cotisations et Dépenses</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Orbitron:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #073332;
+            --secondary-color: #1f4a49;
+            --accent-color: #9b9c28;
+            --bg-color: #073332;
+            --text-color: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --primary-light: #0a4a48;
+            --accent-light: #b5b632;
+            --glass-intensity: 0.15;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .dynamic-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                radial-gradient(circle at 30% 40%, var(--primary-light) 0%, transparent 25%),
+                radial-gradient(circle at 70% 60%, var(--secondary-color) 0%, transparent 25%);
+            opacity: 0.4;
+            z-index: -1;
+            animation: bgMovement 30s infinite alternate ease-in-out;
+        }
+
+        @keyframes bgMovement {
+            0% { 
+                transform: scale(1) rotate(0deg);
+                background-position: 0% 0%;
+            }
+            50% {
+                transform: scale(1.1) rotate(5deg);
+                background-position: 50% 50%;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                background-position: 100% 100%;
+            }
+        }
+        
+        .spotlight {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(155, 156, 40, 0.1),
+                transparent 70%
+            );
+            filter: blur(20px);
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(1px);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        .main-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+        
+        .password-panel {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(7, 51, 50, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 0 30px rgba(31, 74, 73, 0.5);
+            border: 1px solid rgba(155, 156, 40, 0.2);
+            text-align: center;
+        }
+        
+        .password-header {
+            margin-bottom: 2rem;
+        }
+        
+        .password-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            color: var(--text-color);
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .password-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: var(--accent-color);
+            border-radius: 2px;
+            animation: titlePulse 2s infinite ease;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { width: 60px; opacity: 1; }
+            50% { width: 100px; opacity: 0.7; }
+        }
+        
+        .password-field {
+            position: relative;
+            margin-bottom: 1.8rem;
+        }
+        
+        .password-field input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.4s ease;
+            text-align: center;
+        }
+        
+        .password-field input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 
+                0 0 0 2px rgba(155, 156, 40, 0.2),
+                inset 0 0 15px rgba(31, 74, 73, 0.6);
+            background: rgba(31, 74, 73, 0.5);
+            animation: inputPulse 2s infinite;
+        }
+        
+        .password-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
+            border: none;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            animation: buttonFloat 4s ease-in-out infinite;
+        }
+        
+        .password-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 6px 25px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(155, 156, 40, 0.4);
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+        }
+        
+        .menu-container {
+            width: 100%;
+            max-width: 800px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .menu-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--accent-color);
+            text-align: center;
+        }
+        
+        .menu-buttons {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .menu-btn {
+            flex: 1;
+            max-width: 300px;
+            padding: 2rem;
+            background: rgba(7, 51, 50, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(155, 156, 40, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 0 30px rgba(31, 74, 73, 0.5);
+        }
+        
+        .menu-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 2px rgba(155, 156, 40, 0.3),
+                inset 0 0 40px rgba(31, 74, 73, 0.7);
+        }
+        
+        .menu-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+        
+        .menu-btn-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        .content-panel {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(7, 51, 50, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 0 30px rgba(31, 74, 73, 0.5);
+            border: 1px solid rgba(155, 156, 40, 0.2);
+            display: none;
+            margin-top: 2rem;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(155, 156, 40, 0.1);
+        }
+        
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            text-align: center;
+        }
+        
+        .years-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .year-btn {
+            padding: 1rem 2rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .year-btn:hover, .year-btn.active {
+            background: rgba(155, 156, 40, 0.3);
+            border-color: var(--accent-color);
+        }
+        
+        .months-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .month-btn {
+            padding: 1rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .month-btn:hover {
+            background: rgba(155, 156, 40, 0.3);
+            border-color: var(--accent-color);
+        }
+        
+        .status-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .status-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .status-btn:hover, .status-btn.active {
+            background: rgba(155, 156, 40, 0.3);
+            border-color: var(--accent-color);
+        }
+        
+        .members-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+        
+        .member-item {
+            padding: 0.8rem;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .member-item.paid {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 3px solid green;
+        }
+        
+        .member-item.not-paid {
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 3px solid red;
+        }
+        
+        .admin-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(7, 51, 50, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(155, 156, 40, 0.2);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 
+                0 6px 25px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(155, 156, 40, 0.4);
+        }
+        
+        .admin-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(7, 51, 50, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 2px rgba(155, 156, 40, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .admin-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+        
+        .close-admin {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .admin-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .admin-option-btn {
+            padding: 1rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .admin-option-btn:hover {
+            background: rgba(155, 156, 40, 0.3);
+            border-color: var(--accent-color);
+        }
+        
+        .month-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .month-selector select {
+            flex: 1;
+            padding: 0.8rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+        }
+        
+        .expense-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .expense-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .expense-field label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .expense-field input, .expense-field textarea {
+            padding: 0.8rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+        }
+        
+        .expense-field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .add-expense-btn {
+            padding: 0.8rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
+            border: none;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .add-expense-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .expenses-list {
+            margin-top: 2rem;
+        }
+        
+        .expense-item {
+            background: rgba(31, 74, 73, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .expense-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .expense-title {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .expense-amount {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .expense-event {
+            font-style: italic;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+        
+        .expense-description {
+            margin-bottom: 0.5rem;
+        }
+        
+        .delete-expense {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 0, 0.2);
+            border: none;
+            border-radius: 4px;
+            color: #ff6b6b;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .total-expenses {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            text-align: right;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(155, 156, 40, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .menu-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .menu-btn {
+                width: 100%;
+                max-width: none;
+            }
+            
+            .months-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .years-container {
+                flex-wrap: wrap;
+            }
+        }
+        
+        @keyframes inputPulse {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(155, 156, 40, 0.2); }
+            50% { box-shadow: 0 0 0 4px rgba(155, 156, 40, 0.3); }
+        }
+
+        @keyframes buttonFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dynamic-bg"></div>
+    <div class="spotlight"></div>
+    <div class="particles" id="particles-js"></div>
+    
+    <div class="main-container">
+        <div class="password-panel" id="password-panel">
+            <div class="password-header">
+                <h1 class="password-title">ACCÈS SÉCURISÉ</h1>
+                <p>Veuillez entrer le mot de passe pour accéder au système</p>
+            </div>
+            
+            <div class="password-field">
+                <input type="password" id="password-input" placeholder="Mot de passe">
+            </div>
+            
+            <button class="password-submit" id="password-submit">ACCÉDER</button>
+            
+            <div class="error-message" id="password-error">Mot de passe incorrect</div>
+        </div>
+        
+        <div class="menu-container" id="menu-container">
+            <h1 class="menu-title">GESTION DES FINANCES</h1>
+            
+            <div class="menu-buttons">
+                <div class="menu-btn" id="cotisations-btn">
+                    <i class="fas fa-money-bill-wave menu-icon"></i>
+                    <div class="menu-btn-text">COTISATIONS</div>
+                </div>
+                
+                <div class="menu-btn" id="depenses-btn">
+                    <i class="fas fa-chart-pie menu-icon"></i>
+                    <div class="menu-btn-text">DÉPENSES</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-panel" id="cotisations-panel">
+            <button class="back-btn" id="cotisations-back">← Retour</button>
+            <h2 class="panel-title">GESTION DES COTISATIONS</h2>
+            
+            <div class="years-container" id="years-container">
+                <button class="year-btn" data-year="2023">2023</button>
+                <button class="year-btn" data-year="2024">2024</button>
+                <button class="year-btn" data-year="2025">2025</button>
+            </div>
+            
+            <div class="months-container" id="months-container"></div>
+            
+            <div class="status-buttons" id="status-buttons">
+                <button class="status-btn active" data-status="paid">Cotisés</button>
+                <button class="status-btn" data-status="not-paid">Non Cotisés</button>
+            </div>
+            
+            <div class="members-list" id="members-list"></div>
+        </div>
+        
+        <div class="content-panel" id="depenses-panel">
+            <button class="back-btn" id="depenses-back">← Retour</button>
+            <h2 class="panel-title">GESTION DES DÉPENSES</h2>
+            
+            <div class="expenses-list" id="expenses-list"></div>
+        </div>
+    </div>
+    
+    <div class="admin-btn" id="admin-btn">
+        <i class="fas fa-lock"></i>
+    </div>
+    
+    <div class="admin-panel" id="admin-panel">
+        <div class="admin-header">
+            <h2 class="admin-title">PANEL ADMIN</h2>
+            <button class="close-admin" id="close-admin">×</button>
+        </div>
+        
+        <div class="admin-options" id="admin-options">
+            <button class="admin-option-btn" id="admin-month-btn">Sélectionner Mois</button>
+            <button class="admin-option-btn" id="admin-expense-btn">Ajouter Dépense</button>
+        </div>
+        
+        <div class="month-selector" id="month-selector" style="display: none;">
+            <select id="year-select">
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+            </select>
+            
+            <select id="month-select">
+                <option value="0">Janvier</option>
+                <option value="1">Février</option>
+                <option value="2">Mars</option>
+                <option value="3">Avril</option>
+                <option value="4">Mai</option>
+                <option value="5">Juin</option>
+                <option value="6">Juillet</option>
+                <option value="7">Août</option>
+                <option value="8">Septembre</option>
+                <option value="9">Octobre</option>
+                <option value="10">Novembre</option>
+                <option value="11">Décembre</option>
+            </select>
+            
+            <button class="add-expense-btn" id="select-month-btn">Afficher</button>
+        </div>
+        
+        <div class="expense-form" id="expense-form" style="display: none;">
+            <div class="expense-field">
+                <label for="expense-title">Titre</label>
+                <input type="text" id="expense-title" placeholder="Titre de la dépense">
+            </div>
+            
+            <div class="expense-field">
+                <label for="expense-event">Événement</label>
+                <input type="text" id="expense-event" placeholder="Événement associé">
+            </div>
+            
+            <div class="expense-field">
+                <label for="expense-amount">Montant (FCFA)</label>
+                <input type="number" id="expense-amount" placeholder="Montant">
+            </div>
+            
+            <div class="expense-field">
+                <label for="expense-description">Description</label>
+                <textarea id="expense-description" placeholder="Description de la dépense"></textarea>
+            </div>
+            
+            <button class="add-expense-btn" id="add-expense-btn">Ajouter Dépense</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-TpblN0YnekG2tKFRhjOwwEd80qke5pk",
+            authDomain: "ansar-69617.firebaseapp.com",
+            projectId: "ansar-69617",
+            storageBucket: "ansar-69617.appspot.com",
+            messagingSenderId: "1075104578958",
+            appId: "1:1075104578958:web:b5d55c76def4d1d430b8df",
+            measurementId: "G-5XLSPLXH81"
+        };
+
+        // Initialisation Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Variables globales
+        const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        let currentYear = null;
+        let currentMonth = null;
+        let currentStatus = 'paid';
+        let members = [];
+        let expenses = [];
+        
+        // Références aux éléments DOM
+        const passwordPanel = document.getElementById('password-panel');
+        const passwordInput = document.getElementById('password-input');
+        const passwordSubmit = document.getElementById('password-submit');
+        const passwordError = document.getElementById('password-error');
+        const menuContainer = document.getElementById('menu-container');
+        const cotisationsBtn = document.getElementById('cotisations-btn');
+        const depensesBtn = document.getElementById('depenses-btn');
+        const cotisationsPanel = document.getElementById('cotisations-panel');
+        const cotisationsBack = document.getElementById('cotisations-back');
+        const depensesPanel = document.getElementById('depenses-panel');
+        const depensesBack = document.getElementById('depenses-back');
+        const yearsContainer = document.getElementById('years-container');
+        const monthsContainer = document.getElementById('months-container');
+        const statusButtons = document.getElementById('status-buttons');
+        const membersList = document.getElementById('members-list');
+        const expensesList = document.getElementById('expenses-list');
+        const adminBtn = document.getElementById('admin-btn');
+        const adminPanel = document.getElementById('admin-panel');
+        const closeAdmin = document.getElementById('close-admin');
+        const adminOptions = document.getElementById('admin-options');
+        const adminMonthBtn = document.getElementById('admin-month-btn');
+        const adminExpenseBtn = document.getElementById('admin-expense-btn');
+        const monthSelector = document.getElementById('month-selector');
+        const yearSelect = document.getElementById('year-select');
+        const monthSelect = document.getElementById('month-select');
+        const selectMonthBtn = document.getElementById('select-month-btn');
+        const expenseForm = document.getElementById('expense-form');
+        const expenseTitle = document.getElementById('expense-title');
+        const expenseEvent = document.getElementById('expense-event');
+        const expenseAmount = document.getElementById('expense-amount');
+        const expenseDescription = document.getElementById('expense-description');
+        const addExpenseBtn = document.getElementById('add-expense-btn');
+        
+        // Vérification du mot de passe
+        passwordSubmit.addEventListener('click', () => {
+            if (passwordInput.value === '2025') {
+                passwordPanel.style.display = 'none';
+                menuContainer.style.display = 'flex';
+                loadMembers();
+                loadExpenses();
+            } else {
+                passwordError.style.display = 'block';
+            }
+        });
+        
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                passwordSubmit.click();
+            }
+        });
+        
+        // Navigation
+        cotisationsBtn.addEventListener('click', () => {
+            menuContainer.style.display = 'none';
+            cotisationsPanel.style.display = 'block';
+        });
+        
+        depensesBtn.addEventListener('click', () => {
+            menuContainer.style.display = 'none';
+            depensesPanel.style.display = 'block';
+            displayExpenses();
+        });
+        
+        cotisationsBack.addEventListener('click', () => {
+            cotisationsPanel.style.display = 'none';
+            menuContainer.style.display = 'flex';
+        });
+        
+        depensesBack.addEventListener('click', () => {
+            depensesPanel.style.display = 'none';
+            menuContainer.style.display = 'flex';
+        });
+        
+        // Gestion des années
+        yearsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('year-btn')) {
+                document.querySelectorAll('.year-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                currentYear = e.target.dataset.year;
+                displayMonths();
+            }
+        });
+        
+        // Affichage des mois
+        function displayMonths() {
+            monthsContainer.innerHTML = '';
+            
+            for (let i = 0; i < 12; i++) {
+                const monthBtn = document.createElement('div');
+                monthBtn.className = 'month-btn';
+                monthBtn.textContent = months[i];
+                monthBtn.dataset.month = i;
+                
+                monthBtn.addEventListener('click', () => {
+                    currentMonth = i;
+                    displayMembers();
+                });
+                
+                monthsContainer.appendChild(monthBtn);
+            }
+        }
+        
+        // Gestion des statuts (cotisé/non cotisé)
+        statusButtons.addEventListener('click', (e) => {
+            if (e.target.classList.contains('status-btn')) {
+                document.querySelectorAll('.status-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                currentStatus = e.target.dataset.status;
+                displayMembers();
+            }
+        });
+        
+        // Chargement des membres depuis Firebase
+        async function loadMembers() {
+            try {
+                const snapshot = await db.collection("members").get();
+                members = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Initialiser l'affichage avec l'année courante
+                const currentDate = new Date();
+                currentYear = currentDate.getFullYear().toString();
+                
+                document.querySelectorAll('.year-btn').forEach(btn => {
+                    if (btn.dataset.year === currentYear) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                displayMonths();
+            } catch (error) {
+                console.error("Erreur de chargement des membres:", error);
+            }
+        }
+        
+        // Affichage des membres selon le statut
+        function displayMembers() {
+            if (currentYear === null || currentMonth === null) return;
+            
+            membersList.innerHTML = '';
+            
+            const monthKey = `${currentYear}-${currentMonth}`;
+            
+            const filteredMembers = members.filter(member => {
+                const contributions = member.contributions || {};
+                const monthlyContributions = contributions.Mensuelle || {};
+                const yearContributions = monthlyContributions[currentYear] || Array(12).fill(false);
+                
+                if (currentStatus === 'paid') {
+                    return yearContributions[currentMonth] === true;
+                } else {
+                    return yearContributions[currentMonth] !== true;
+                }
+            });
+            
+            if (filteredMembers.length === 0) {
+                membersList.innerHTML = `<div class="member-item">Aucun membre ${currentStatus === 'paid' ? 'cotisé' : 'non cotisé'} pour ce mois</div>`;
+                return;
+            }
+            
+            filteredMembers.forEach(member => {
+                const memberItem = document.createElement('div');
+                memberItem.className = `member-item ${currentStatus === 'paid' ? 'paid' : 'not-paid'}`;
+                
+                memberItem.innerHTML = `
+                    <div>${member.firstname} ${member.lastname}</div>
+                    <div>${member.code}</div>
+                `;
+                
+                membersList.appendChild(memberItem);
+            });
+        }
+        
+        // Panel admin
+        adminBtn.addEventListener('click', () => {
+            const adminPassword = prompt("Veuillez entrer le mot de passe administrateur:");
+            if (adminPassword === "ADMIN123") {
+                adminPanel.style.display = 'block';
+            } else {
+                alert("Mot de passe incorrect");
+            }
+        });
+        
+        closeAdmin.addEventListener('click', () => {
+            adminPanel.style.display = 'none';
+            adminOptions.style.display = 'flex';
+            monthSelector.style.display = 'none';
+            expenseForm.style.display = 'none';
+        });
+        
+        adminMonthBtn.addEventListener('click', () => {
+            adminOptions.style.display = 'none';
+            monthSelector.style.display = 'flex';
+        });
+        
+        adminExpenseBtn.addEventListener('click', () => {
+            adminOptions.style.display = 'none';
+            expenseForm.style.display = 'flex';
+        });
+        
+        selectMonthBtn.addEventListener('click', () => {
+            const selectedYear = yearSelect.value;
+            const selectedMonth = monthSelect.value;
+            
+            // Ici, vous pouvez implémenter la logique pour afficher les cotisations du mois sélectionné
+            // sur la page d'accueil avant l'authentification
+            alert(`Mois sélectionné: ${months[selectedMonth]} ${selectedYear}`);
+            
+            adminPanel.style.display = 'none';
+            adminOptions.style.display = 'flex';
+            monthSelector.style.display = 'none';
+        });
+        
+        // Gestion des dépenses
+        addExpenseBtn.addEventListener('click', async () => {
+            const title = expenseTitle.value.trim();
+            const event = expenseEvent.value.trim();
+            const amount = parseFloat(expenseAmount.value);
+            const description = expenseDescription.value.trim();
+            
+            if (!title || isNaN(amount)) {
+                alert("Veuillez remplir au moins le titre et le montant");
+                return;
+            }
+            
+            try {
+                await db.collection("expenses").add({
+                    title,
+                    event,
+                    amount,
+                    description,
+                    date: new Date().toISOString()
+                });
+                
+                alert("Dépense ajoutée avec succès!");
+                
+                // Réinitialiser le formulaire
+                expenseTitle.value = '';
+                expenseEvent.value = '';
+                expenseAmount.value = '';
+                expenseDescription.value = '';
+                
+                // Recharger les dépenses
+                loadExpenses();
+                
+                adminPanel.style.display = 'none';
+                adminOptions.style.display = 'flex';
+                expenseForm.style.display = 'none';
+            } catch (error) {
+                console.error("Erreur lors de l'ajout de la dépense:", error);
+                alert("Une erreur est survenue lors de l'ajout de la dépense");
+            }
+        });
+        
+        // Chargement des dépenses depuis Firebase
+        async function loadExpenses() {
+            try {
+                const snapshot = await db.collection("expenses").orderBy("date", "desc").get();
+                expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                displayExpenses();
+            } catch (error) {
+                console.error("Erreur de chargement des dépenses:", error);
+            }
+        }
+        
+        // Affichage des dépenses
+        function displayExpenses() {
+            expensesList.innerHTML = '';
+            
+            if (expenses.length === 0) {
+                expensesList.innerHTML = '<div class="expense-item">Aucune dépense enregistrée</div>';
+                return;
+            }
+            
+            let total = 0;
+            
+            expenses.forEach(expense => {
+                total += expense.amount;
+                
+                const expenseItem = document.createElement('div');
+                expenseItem.className = 'expense-item';
+                
+                expenseItem.innerHTML = `
+                    <div class="expense-header">
+                        <div class="expense-title">${expense.title}</div>
+                        <div class="expense-amount">${expense.amount.toLocaleString()} FCFA</div>
+                    </div>
+                    ${expense.event ? `<div class="expense-event">${expense.event}</div>` : ''}
+                    ${expense.description ? `<div class="expense-description">${expense.description}</div>` : ''}
+                    <button class="delete-expense" data-id="${expense.id}">×</button>
+                `;
+                
+                expensesList.appendChild(expenseItem);
+            });
+            
+            // Ajout du total
+            const totalElement = document.createElement('div');
+            totalElement.className = 'total-expenses';
+            totalElement.textContent = `Total: ${total.toLocaleString()} FCFA`;
+            expensesList.appendChild(totalElement);
+            
+            // Gestion de la suppression des dépenses
+            document.querySelectorAll('.delete-expense').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const expenseId = e.target.dataset.id;
+                    if (confirm("Êtes-vous sûr de vouloir supprimer cette dépense?")) {
+                        try {
+                            await db.collection("expenses").doc(expenseId).delete();
+                            loadExpenses();
+                        } catch (error) {
+                            console.error("Erreur lors de la suppression:", error);
+                            alert("Une erreur est survenue lors de la suppression");
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Initialisation des particules d'arrière-plan
+        function initParticles() {
+            const container = document.getElementById('particles-js');
+            const particleCount = Math.floor(window.innerWidth / 15);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 6 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 120 - 20}%`;
+                
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                particle.style.animation = `float ${duration}s linear ${delay}s infinite`;
+                
+                particle.style.opacity = Math.random() * 0.2;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Effet de lumière qui suit la souris
+        document.addEventListener('mousemove', (e) => {
+            const spotlight = document.querySelector('.spotlight');
+            spotlight.style.left = `${e.clientX}px`;
+            spotlight.style.top = `${e.clientY}px`;
+        });
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            
+            // Définir l'année courante par défaut
+            const currentDate = new Date();
+            currentYear = currentDate.getFullYear().toString();
+            
+            // Sélectionner l'année courante
+            document.querySelectorAll('.year-btn').forEach(btn => {
+                if (btn.dataset.year === currentYear) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            displayMonths();
+        });
+    </script>
+</body>
+</html> 
