@@ -998,11 +998,7 @@
         </div>
         
         <!-- Affichage public des cotisations -->
-        <div class="public-display" id="publicDisplay">
-            <h3 class="public-title" id="publicTitle">COTISATIONS</h3>
-            <div class="public-members" id="publicMembers"></div>
-            <div class="member-count" id="memberCount"></div>
-        </div>
+        
     </div>
         
         <!-- Panel Cotisations -->
@@ -1156,31 +1152,91 @@
         let allMembers = [];
         
         // Charger les membres depuis Firebase
-        async function loadMembers() {
-            try {
-                const snapshot = await db.collection("members").get();
-                members = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+       async function loadMembers() {
+    try {
+        const snapshot = await db.collection("members").get();
+        members = [];
+        
+        snapshot.forEach(doc => {
+            const memberData = doc.data();
+            const member = {
+                id: doc.id,
+                firstname: memberData.firstname || "",
+                lastname: memberData.lastname || "",
+                code: memberData.code || "",
+                contributions: formatContributions(memberData.contributions) // Conversion du format
+            };
+            members.push(member);
+        });
+        
+        // Trier par ordre alphabétique
+        members.sort((a, b) => {
+            const nameA = `${a.firstname} ${a.lastname}`.toUpperCase();
+            const nameB = `${b.firstname} ${b.lastname}`.toUpperCase();
+            return nameA.localeCompare(nameB);
+        });
+        
+        allMembers = [...members];
+        
+        console.log("Membres chargés:", members); // Debug
+        
+        // Charger l'affichage public s'il existe
+        const publicDisplay = localStorage.getItem('publicDisplay');
+        if (publicDisplay) {
+            const data = JSON.parse(publicDisplay);
+            displayPublicMembers(data.year, data.month);
+        }
+    } catch (error) {
+        console.error("Erreur de chargement des membres:", error);
+    }
+}
+
+// Fonction pour convertir le format des contributions
+// Fonction pour convertir le format des contributions
+function formatContributions(contributionsData) {
+    const formatted = {};
+    
+    if (!contributionsData) return formatted;
+    
+    // Parcourir chaque année dans Mensuelle
+    if (contributionsData.Mensuelle) {
+        for (const year in contributionsData.Mensuelle) {
+            if (contributionsData.Mensuelle.hasOwnProperty(year)) {
+                const months = contributionsData.Mensuelle[year];
                 
-                // Trier par ordre alphabétique
-                members.sort((a, b) => {
-                    const nameA = `${a.firstname} ${a.lastname}`.toUpperCase();
-                    const nameB = `${b.firstname} ${b.lastname}`.toUpperCase();
-                    return nameA.localeCompare(nameB);
-                });
-                
-                allMembers = [...members];
-                
-                // Charger l'affichage public s'il existe
-                const publicDisplay = localStorage.getItem('publicDisplay');
-                if (publicDisplay) {
-                    const data = JSON.parse(publicDisplay);
-                    displayPublicMembers(data.year, data.month);
+                // Parcourir chaque mois (index 0-11)
+                for (let monthIndex = 0; monthIndex < months.length; monthIndex++) {
+                    if (months[monthIndex] === true) {
+                        // Créer la clé au format "année-mois"
+                        formatted[`${year}-${monthIndex}`] = true;
+                    }
                 }
-            } catch (error) {
-                console.error("Erreur de chargement des membres:", error);
             }
         }
-        
+    }
+    
+    return formatted;
+}
+      // Fonction pour vérifier si un membre a payé pour un mois donné
+// Fonction pour vérifier si un membre a payé pour un mois donné
+function hasMemberPaid(member, year, month) {
+    if (!member.contributions) return false;
+    
+    // Vérifier d'abord le nouveau format "année-mois" (ex: "2023-0")
+    const monthKey = `${year}-${month}`;
+    if (member.contributions[monthKey] === true) {
+        return true;
+    }
+    
+    // Vérifier l'ancien format Mensuelle.2023[0]
+    if (member.contributions.Mensuelle && 
+        member.contributions.Mensuelle[year] && 
+        member.contributions.Mensuelle[year][month] === true) {
+        return true;
+    }
+    
+    return false;
+}
         // Afficher le panel des cotisations
         function showCotisations() {
             document.getElementById('mainMenu').style.display = 'none';
@@ -1247,6 +1303,7 @@
         
         // Afficher les membres pour le mois sélectionné
   // Afficher les membres pour le mois sélectionné dans une nouvelle page interne
+// Afficher les membres pour le mois sélectionné
 function showMembersForMonth() {
     if (!currentYear || currentMonth === null) {
         alert('Veuillez sélectionner une année et un mois');
@@ -1257,15 +1314,13 @@ function showMembersForMonth() {
     document.getElementById('cotisationsPanel').style.display = 'none';
     document.getElementById('resultsPanel').style.display = 'block';
     
-    const monthKey = `${currentYear}-${currentMonth}`;
     const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
     
     // Mettre à jour le titre
     document.getElementById('resultsTitle').textContent = `COTISATIONS - ${monthNames[currentMonth]} ${currentYear}`;
     
- // À l'intérieur de showMembersForMonth(), remplacez:
-const resultsList = document.getElementById('resultsList');
-resultsList.innerHTML = '';
+    const resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
     
     // Membres cotisés
     const paidTitle = document.createElement('div');
@@ -1278,7 +1333,7 @@ resultsList.innerHTML = '';
     let paidCount = 0;
     
     members.forEach(member => {
-        const hasPaid = member.contributions && member.contributions[monthKey];
+        const hasPaid = hasMemberPaid(member, currentYear, currentMonth); // CORRIGÉ ICI
         
         if (hasPaid) {
             paidCount++;
@@ -1310,7 +1365,7 @@ resultsList.innerHTML = '';
     let unpaidCount = 0;
     
     members.forEach(member => {
-        const hasPaid = member.contributions && member.contributions[monthKey];
+        const hasPaid = hasMemberPaid(member, currentYear, currentMonth); // CORRIGÉ ICI
         
         if (!hasPaid) {
             unpaidCount++;
@@ -1482,7 +1537,8 @@ async function shareResults() {
         let paidMembers = [];
         
         members.forEach(member => {
-            const hasPaid = member.contributions && member.contributions[monthKey];
+           const hasPaid = hasMemberPaid(member, currentYear, currentMonth);
+
             if (hasPaid) {
                 paidCount++;
                 paidMembers.push(member);
@@ -1611,6 +1667,8 @@ async function shareResults() {
         alert('Une erreur est survenue lors de la génération du PDF.');
     }
 }
+      
+      
       
       // Fonction pour afficher le menu de partage
 function showShareMenu(pdfUrl, filename) {
@@ -2080,61 +2138,64 @@ function updatePublicDisplay() {
 }
         
         // Afficher les membres publics
-        function displayPublicMembers(year, month) {
-            const publicTitle = document.getElementById('publicTitle');
-            const publicMembers = document.getElementById('publicMembers');
-            const memberCount = document.getElementById('memberCount');
-            
-            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-            publicTitle.textContent = `COTISATIONS - ${monthNames[month]} ${year}`;
-            
-            publicMembers.innerHTML = '';
-            
-            const monthKey = `${year}-${month}`;
-            
-            // Membres cotisés
-            let paidCount = 0;
-            let unpaidCount = 0;
-            
-            // Afficher les membres cotisés
-            members.forEach(member => {
-                const hasPaid = member.contributions && member.contributions[monthKey];
-                
-                if (hasPaid) {
-                    paidCount++;
-                    const memberElement = document.createElement('div');
-                    memberElement.className = 'public-member paid';
-                    memberElement.innerHTML = `
-                        <span>${paidCount}. ${member.firstname} ${member.lastname}</span>
-                        <span>${member.code}</span>
-                    `;
-                    publicMembers.appendChild(memberElement);
-                }
-            });
-            
-            // Afficher les membres non cotisés
-            members.forEach(member => {
-                const hasPaid = member.contributions && member.contributions[monthKey];
-                
-                if (!hasPaid) {
-                    unpaidCount++;
-                    const memberElement = document.createElement('div');
-                    memberElement.className = 'public-member unpaid';
-                    memberElement.innerHTML = `
-                        <span>${unpaidCount}. ${member.firstname} ${member.lastname}</span>
-                        <span>${member.code}</span>
-                    `;
-                    publicMembers.appendChild(memberElement);
-                }
-            });
-            
-            memberCount.innerHTML = `
-                <div>Membres cotisés: <span style="color: green">${paidCount}</span></div>
-                <div>Membres non cotisés: <span style="color: red">${unpaidCount}</span></div>
+ // Afficher les membres publics
+function displayPublicMembers(year, month) {
+    const publicTitle = document.getElementById('publicTitle');
+    const publicMembers = document.getElementById('publicMembers');
+    const memberCount = document.getElementById('memberCount');
+    
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    publicTitle.textContent = `COTISATIONS - ${monthNames[month]} ${year}`;
+    
+    publicMembers.innerHTML = '';
+    
+    console.log("Recherche des contributions pour:", year, month); // Debug
+    
+    // Membres cotisés
+    let paidCount = 0;
+    let unpaidCount = 0;
+    
+    // Afficher les membres cotisés
+    members.forEach(member => {
+        const hasPaid = hasMemberPaid(member, year, month);
+        
+        console.log(`${member.firstname} ${member.lastname}:`, hasPaid); // Debug
+        
+        if (hasPaid) {
+            paidCount++;
+            const memberElement = document.createElement('div');
+            memberElement.className = 'public-member paid';
+            memberElement.innerHTML = `
+                <span>${paidCount}. ${member.firstname} ${member.lastname}</span>
+                <span>${member.code}</span>
             `;
-            
-            document.getElementById('publicDisplay').style.display = 'block';
+            publicMembers.appendChild(memberElement);
         }
+    });
+    
+    // Afficher les membres non cotisés
+    members.forEach(member => {
+        const hasPaid = hasMemberPaid(member, year, month);
+        
+        if (!hasPaid) {
+            unpaidCount++;
+            const memberElement = document.createElement('div');
+            memberElement.className = 'public-member unpaid';
+            memberElement.innerHTML = `
+                <span>${unpaidCount}. ${member.firstname} ${member.lastname}</span>
+                <span>${member.code}</span>
+            `;
+            publicMembers.appendChild(memberElement);
+        }
+    });
+    
+    memberCount.innerHTML = `
+        <div>Membres cotisés: <span style="color: green">${paidCount}</span></div>
+        <div>Membres non cotisés: <span style="color: red">${unpaidCount}</span></div>
+    `;
+    
+    document.getElementById('publicDisplay').style.display = 'block';
+}
         
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
