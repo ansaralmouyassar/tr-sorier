@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Cotisations et Dépenses</title>
+    <title>Gestion des Cotisations</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
@@ -70,58 +70,7 @@
             }
         }
         
-        .spotlight {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(
-                circle,
-                rgba(155, 156, 40, 0.1),
-                transparent 70%
-            );
-            filter: blur(20px);
-            z-index: 2;
-            pointer-events: none;
-        }
-        
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
-        .particle {
-            position: absolute;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            opacity: 0;
-            filter: blur(1px);
-            animation: float 15s infinite linear;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.3;
-            }
-            90% {
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateY(-100px) translateX(100px);
-                opacity: 0;
-            }
-        }
-        
-        .main-container {
+        .container {
             position: absolute;
             top: 0;
             left: 0;
@@ -134,125 +83,12 @@
             z-index: 10;
             padding: 20px;
             box-sizing: border-box;
-            overflow: auto;
         }
         
-        .password-panel {
-            width: 100%;
-            max-width: 500px;
-            background: rgba(7, 51, 50, 0.8);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.08),
-                inset 0 0 30px rgba(31, 74, 73, 0.5);
-            border: 1px solid rgba(155, 156, 40, 0.2);
-            text-align: center;
-        }
-        
-        .password-header {
-            margin-bottom: 2rem;
-        }
-        
-        .password-title {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 600;
-            font-size: 1.8rem;
-            letter-spacing: 1px;
-            color: var(--text-color);
-            position: relative;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-        
-        .password-title::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 2px;
-            background: var(--accent-color);
-            border-radius: 2px;
-            animation: titlePulse 2s infinite ease;
-        }
-        
-        @keyframes titlePulse {
-            0%, 100% { width: 60px; opacity: 1; }
-            50% { width: 100px; opacity: 0.7; }
-        }
-        
-        .password-field {
-            position: relative;
-            margin-bottom: 1.8rem;
-        }
-        
-        .password-field input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(31, 74, 73, 0.3);
-            border: 1px solid rgba(155, 156, 40, 0.3);
-            border-radius: 8px;
-            color: var(--text-color);
-            font-size: 1rem;
-            transition: all 0.4s ease;
-            text-align: center;
-        }
-        
-        .password-field input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 
-                0 0 0 2px rgba(155, 156, 40, 0.2),
-                inset 0 0 15px rgba(31, 74, 73, 0.6);
-            background: rgba(31, 74, 73, 0.5);
-            animation: inputPulse 2s infinite;
-        }
-        
-        .password-submit {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
-            border: none;
-            border-radius: 8px;
-            color: var(--text-color);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            margin-top: 1rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            z-index: 1;
-            animation: buttonFloat 4s ease-in-out infinite;
-        }
-        
-        .password-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 6px 25px rgba(0, 0, 0, 0.4),
-                0 0 20px rgba(155, 156, 40, 0.4);
-        }
-        
-        .error-message {
-            color: #ff6b6b;
-            margin-top: 1rem;
-            display: none;
-            text-align: center;
-        }
-        
-        .menu-container {
+        .main-menu {
             width: 100%;
             max-width: 800px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
+            text-align: center;
         }
         
         .menu-title {
@@ -260,57 +96,77 @@
             font-size: 2rem;
             margin-bottom: 2rem;
             color: var(--accent-color);
-            text-align: center;
         }
         
         .menu-buttons {
             display: flex;
             gap: 2rem;
-            width: 100%;
             justify-content: center;
+            flex-wrap: wrap;
         }
         
         .menu-btn {
-            flex: 1;
-            max-width: 300px;
-            padding: 2rem;
-            background: rgba(7, 51, 50, 0.8);
-            backdrop-filter: blur(12px);
-            border-radius: 15px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             cursor: pointer;
             transition: all 0.4s ease;
-            border: 1px solid rgba(155, 156, 40, 0.2);
             box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.08),
-                inset 0 0 30px rgba(31, 74, 73, 0.5);
+                0 0 0 4px rgba(155, 156, 40, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.4),
+                inset 0 0 20px rgba(31, 74, 73, 0.6);
         }
         
         .menu-btn:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
             box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.4),
-                0 0 0 2px rgba(155, 156, 40, 0.3),
-                inset 0 0 40px rgba(31, 74, 73, 0.7);
+                0 0 0 6px rgba(155, 156, 40, 0.4),
+                0 15px 40px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(31, 74, 73, 0.8);
         }
         
-        .menu-icon {
-            font-size: 3rem;
+        .menu-btn i {
+            font-size: 4rem;
             margin-bottom: 1rem;
             color: var(--accent-color);
         }
         
-        .menu-btn-text {
+        .menu-btn span {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.2rem;
-            text-align: center;
+        }
+        
+        .admin-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 
+                0 0 0 4px rgba(155, 156, 40, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.4),
+                inset 0 0 20px rgba(31, 74, 73, 0.6);
+            z-index: 100;
+        }
+        
+        .admin-btn i {
+            font-size: 1.5rem;
+            color: var(--accent-color);
         }
         
         .content-panel {
+            display: none;
             width: 100%;
             max-width: 1000px;
             background: rgba(7, 51, 50, 0.8);
@@ -322,7 +178,6 @@
                 0 0 0 1px rgba(255, 255, 255, 0.08),
                 inset 0 0 30px rgba(31, 74, 73, 0.5);
             border: 1px solid rgba(155, 156, 40, 0.2);
-            display: none;
             margin-top: 2rem;
             max-height: 80vh;
             overflow-y: auto;
@@ -330,20 +185,14 @@
         
         .back-btn {
             background: transparent;
-            border: 1px solid var(--accent-color);
+            border: none;
             color: var(--accent-color);
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+            font-size: 1.5rem;
             cursor: pointer;
             margin-bottom: 1rem;
-            transition: all 0.3s ease;
         }
         
-        .back-btn:hover {
-            background: rgba(155, 156, 40, 0.1);
-        }
-        
-        .panel-title {
+        .panel-header {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
@@ -398,28 +247,6 @@
             border-color: var(--accent-color);
         }
         
-        .status-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-        
-        .status-btn {
-            padding: 0.8rem 1.5rem;
-            background: rgba(31, 74, 73, 0.3);
-            border: 1px solid rgba(155, 156, 40, 0.3);
-            border-radius: 8px;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .status-btn:hover, .status-btn.active {
-            background: rgba(155, 156, 40, 0.3);
-            border-color: var(--accent-color);
-        }
-        
         .members-list {
             display: grid;
             gap: 0.5rem;
@@ -427,67 +254,40 @@
         
         .member-item {
             padding: 0.8rem;
-            border-radius: 5px;
+            border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
         .member-item.paid {
-            background: rgba(0, 255, 0, 0.1);
-            border-left: 3px solid green;
+            background: rgba(0, 200, 0, 0.3);
+            border-left: 4px solid green;
         }
         
-        .member-item.not-paid {
-            background: rgba(255, 0, 0, 0.1);
-            border-left: 3px solid red;
-        }
-        
-        .admin-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(7, 51, 50, 0.8);
-            backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 
-                0 4px 20px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(155, 156, 40, 0.2);
-            z-index: 100;
-            transition: all 0.3s ease;
-        }
-        
-        .admin-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 
-                0 6px 25px rgba(0, 0, 0, 0.4),
-                0 0 20px rgba(155, 156, 40, 0.4);
+        .member-item.unpaid {
+            background: rgba(255, 0, 0, 0.3);
+            border-left: 4px solid red;
         }
         
         .admin-panel {
+            display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             background: rgba(7, 51, 50, 0.95);
             backdrop-filter: blur(16px);
             border-radius: 20px;
             padding: 2rem;
             box-shadow: 
                 0 8px 32px rgba(0, 0, 0, 0.4),
-                0 0 0 2px rgba(155, 156, 40, 0.3);
-            border: 1px solid rgba(155, 156, 40, 0.2);
+                0 0 0 2px rgba(155, 156, 40, 0.3),
+                inset 0 0 40px rgba(31, 74, 73, 0.7);
+            border: 1px solid rgba(155, 156, 40, 0.4);
             z-index: 1000;
-            display: none;
         }
         
         .admin-header {
@@ -511,71 +311,18 @@
             cursor: pointer;
         }
         
-        .admin-options {
+        .month-selector {
             display: flex;
             flex-direction: column;
             gap: 1rem;
-        }
-        
-        .admin-option-btn {
-            padding: 1rem;
-            background: rgba(31, 74, 73, 0.3);
-            border: 1px solid rgba(155, 156, 40, 0.3);
-            border-radius: 8px;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        
-        .admin-option-btn:hover {
-            background: rgba(155, 156, 40, 0.3);
-            border-color: var(--accent-color);
-        }
-        
-        .month-selector {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
         }
         
         .month-selector select {
-            flex: 1;
             padding: 0.8rem;
             background: rgba(31, 74, 73, 0.3);
             border: 1px solid rgba(155, 156, 40, 0.3);
             border-radius: 8px;
             color: var(--text-color);
-        }
-        
-        .expense-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .expense-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .expense-field label {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-        
-        .expense-field input, .expense-field textarea {
-            padding: 0.8rem;
-            background: rgba(31, 74, 73, 0.3);
-            border: 1px solid rgba(155, 156, 40, 0.3);
-            border-radius: 8px;
-            color: var(--text-color);
-        }
-        
-        .expense-field textarea {
-            min-height: 100px;
-            resize: vertical;
         }
         
         .add-expense-btn {
@@ -584,198 +331,765 @@
             border: none;
             border-radius: 8px;
             color: var(--text-color);
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+      .public-display {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(7, 51, 50, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(155, 156, 40, 0.2);
+    max-height: 300px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+        
+        .public-title {
             font-family: 'Orbitron', sans-serif;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .public-members {
+            display: grid;
+            gap: 0.5rem;
+        }
+        
+        .public-member {
+            padding: 0.8rem;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .public-member.paid {
+            background: rgba(0, 200, 0, 0.3);
+            border-left: 4px solid green;
+        }
+        
+        .public-member.unpaid {
+            background: rgba(255, 0, 0, 0.3);
+            border-left: 4px solid red;
+        }
+        
+        .member-count {
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-top: 0.5rem;
+        }
+        
+        .members-by-person-panel {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(7, 51, 50, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 0 30px rgba(31, 74, 73, 0.5);
+            border: 1px solid rgba(155, 156, 40, 0.2);
+            margin-top: 2rem;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .search-box {
+            padding: 0.8rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        .member-person-item {
+            padding: 0.8rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         
-        .add-expense-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        .member-person-item:hover {
+            background: rgba(155, 156, 40, 0.3);
+            border-color: var(--accent-color);
         }
         
-        .expenses-list {
+        .member-detail-panel {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(7, 51, 50, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 0 30px rgba(31, 74, 73, 0.5);
+            border: 1px solid rgba(155, 156, 40, 0.2);
             margin-top: 2rem;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
-        .expense-item {
-            background: rgba(31, 74, 73, 0.3);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            position: relative;
+        .member-detail-header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
         
-        .expense-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        
-        .expense-title {
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-        
-        .expense-amount {
+        .member-detail-name {
             font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
         }
         
-        .expense-event {
-            font-style: italic;
-            margin-bottom: 0.5rem;
+        .member-detail-code {
             color: var(--text-muted);
         }
         
-        .expense-description {
-            margin-bottom: 0.5rem;
+        .member-years-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
         }
         
-        .delete-expense {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 0, 0, 0.2);
+        .member-year-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .member-year-btn:hover, .member-year-btn.active {
+            background: rgba(155, 156, 40, 0.3);
+            border-color: var(--accent-color);
+        }
+        
+        .member-months-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .member-month-item {
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .member-month-item.paid {
+            background: rgba(0, 200, 0, 0.3);
+            border: 2px solid green;
+        }
+        
+        .member-month-item.unpaid {
+            background: rgba(255, 0, 0, 0.3);
+            border: 2px solid red;
+        }
+        
+        .password-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background: rgba(7, 51, 50, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 2px rgba(155, 156, 40, 0.3),
+                inset 0 0 40px rgba(31, 74, 73, 0.7);
+            border: 1px solid rgba(155, 156, 40, 0.4);
+            z-index: 1000;
+        }
+        
+        .password-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .password-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+        
+        .password-field {
+            position: relative;
+            margin-bottom: 1.8rem;
+        }
+        
+        .password-field input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(31, 74, 73, 0.3);
+            border: 1px solid rgba(155, 156, 40, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        .password-field input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 
+                0 0 0 2px rgba(155, 156, 40, 0.2),
+                inset 0 0 15px rgba(31, 74, 73, 0.6);
+        }
+        
+        .password-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
             border: none;
-            border-radius: 4px;
-            color: #ff6b6b;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
             cursor: pointer;
         }
         
-        .total-expenses {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            text-align: right;
+        .password-error {
+            color: #ff6b6b;
             margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(155, 156, 40, 0.3);
+            text-align: center;
+            display: none;
         }
         
         @media (max-width: 768px) {
+            .months-container, .member-months-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
             .menu-buttons {
                 flex-direction: column;
                 align-items: center;
             }
             
             .menu-btn {
-                width: 100%;
-                max-width: none;
+                width: 250px;
             }
             
-            .months-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .years-container {
+            .years-container, .member-years-container {
                 flex-wrap: wrap;
             }
         }
-        
-        @keyframes inputPulse {
-            0%, 100% { box-shadow: 0 0 0 2px rgba(155, 156, 40, 0.2); }
-            50% { box-shadow: 0 0 0 4px rgba(155, 156, 40, 0.3); }
-        }
+      /* Style pour l'en-tête du panneau de mot de passe */
+.password-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
 
-        @keyframes buttonFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
+/* Bouton retour dans le panneau de mot de passe */
+.back-btn-password {
+    background: transparent;
+    border: none;
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 15px;
+    position: absolute;
+    left: 0;
+}
+
+.password-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    text-align: center;
+    width: 100%;
+}
+      
+      .toggle-public-display {
+    background: transparent;
+    border: none;
+    color: var(--accent-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.public-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.minimized {
+    max-height: 40px;
+    overflow: hidden;
+}
+      /* Rendre le conteneur principal scrollable */
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Changé de center à flex-start */
+    align-items: center;
+    z-index: 10;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Permettre le défilement */
+}
+
+/* Réduire la taille des boutons */
+.menu-btn {
+    width: 180px; /* Réduit de 200px */
+    height: 180px; /* Réduit de 200px */
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    box-shadow: 
+        0 0 0 4px rgba(155, 156, 40, 0.3),
+        0 10px 30px rgba(0, 0, 0, 0.4),
+        inset 0 0 20px rgba(31, 74, 73, 0.6);
+}
+
+/* Réduire la taille des icônes dans les boutons */
+.menu-btn i {
+    font-size: 2rem; /* Réduit de 4rem */
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+/* Ajuster l'espacement du menu */
+.menu-buttons {
+    display: flex;
+    gap: 1.5rem; /* Réduit de 2rem */
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+/* Ajuster l'affichage public pour qu'il prenne moins de place */
+.public-display {
+    width: 100%;
+    margin-top: 0.2rem; /* Réduit de 2rem */
+    padding: 1rem;
+    background: rgba(7, 51, 50, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(155, 156, 40, 0.2);
+    max-height: 1500px; /* Réduit de 300px */
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+/* Ajuster le titre pour qu'il prenne moins de place */
+.menu-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem; /* Réduit de 2rem */
+    margin-bottom: 0.2rem; /* Réduit de 2rem */
+    color: var(--accent-color);
+}
+      
+      /* Panel des résultats */
+/* Panel des résultats */
+.results-panel {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 1000px;
+    height: 85vh;
+    background: rgba(7, 51, 50, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 0 30px rgba(31, 74, 73, 0.5);
+    border: 1px solid rgba(155, 156, 40, 0.2);
+    z-index: 1000;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.results-content {
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 10px;
+    margin-top: 15px;
+}
+
+/* Scrollbar personnalisée */
+.results-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.results-content::-webkit-scrollbar-track {
+    background: rgba(31, 74, 73, 0.3);
+    border-radius: 4px;
+}
+
+.results-content::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+
+.results-content::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-light);
+}
+
+.results-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+.print-btn {
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-light));
+    border: none;
+    border-radius: 8px;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.print-btn:hover {
+    background: linear-gradient(135deg, var(--primary-light), var(--secondary-color));
+}
+
+/* Styles pour l'impression */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .results-panel, .results-panel * {
+        visibility: visible;
+    }
+    .results-panel {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        background: white;
+        color: black;
+    }
+    .back-btn, .results-actions {
+        display: none !important;
+    }
+}
+      .results-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.results-header .panel-header {
+    margin-bottom: 0;
+    flex: 1;
+    text-align: center;
+    margin-left: -40px; /* Pour centrer par rapport au bouton */
+}
+      /* Styles pour l'impression */
+@media print {
+    body * {
+        visibility: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .results-panel, .results-panel * {
+        visibility: visible;
+    }
+    
+    .results-panel {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        background: white;
+        color: black;
+        box-shadow: none;
+        border: none;
+        padding: 1rem;
+        overflow: visible;
+    }
+    
+    .back-btn, .results-actions, .print-btn {
+        display: none !important;
+    }
+    
+    .member-item {
+        color: black !important;
+        border-left: 4px solid #000 !important;
+    }
+    
+    .paid {
+        background: #d4edda !important;
+    }
+    
+    .unpaid {
+        background: #f8d7da !important;
+    }
+}
+
+/* Masquer les éléments pendant l'impression */
+.print-actions, .print-header {
+    display: none;
+}
+
+@media print {
+    .print-actions, .print-header {
+        display: none !important;
+    }
+}
+      /* Overlay pour fond obscurci */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+}
+
+/* Panel des résultats corrigé */
+.results-panel {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    max-width: 1200px;
+    height: 95vh;
+    background: rgba(7, 51, 50, 0.98);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    overflow: hidden; 
+    flex-direction: column;
+}
+
+.results-content {
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 10px;
+    margin-top: 10px;
+    max-height: calc(85vh - 50px); /* Ajustement pour tenir compte du header et des boutons */
+}
+
+/* Header des résultats */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--accent-color);
+}
+
+.results-title {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-color);
+    font-size: 1.5rem;
+}
+
+/* Boutons d'action */
+.results-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.action-btn {
+    padding: 10px 15px;
+    background: var(--secondary-color);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.action-btn:hover {
+    background: var(--primary-light);
+}
+
+/* Styles pour l'impression */
+@media print { 
+    body * {
+        visibility: hidden;
+    }
+    .results-panel, .results-panel * {
+        visibility: visible;
+    }
+    .results-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        background: white;
+        color: black;
+        box-shadow: none;
+    }
+    .results-header, .results-actions {
+        display: none;
+    }
+}
     </style>
 </head>
 <body>
     <div class="dynamic-bg"></div>
-    <div class="spotlight"></div>
-    <div class="particles" id="particles-js"></div>
     
-    <div class="main-container">
-        <div class="password-panel" id="password-panel">
-            <div class="password-header">
-                <h1 class="password-title">ACCÈS SÉCURISÉ</h1>
-                <p>Veuillez entrer le mot de passe pour accéder au système</p>
+   <div class="container">
+    <!-- Menu principal -->
+    <div class="main-menu" id="mainMenu">
+        <h2 class="menu-title">GESTION DES COTISATIONS</h2>
+        <div class="menu-buttons">
+            <div class="menu-btn" onclick="showCotisations()">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>PAR MOIS</span>
             </div>
-            
-            <div class="password-field">
-                <input type="password" id="password-input" placeholder="Mot de passe">
-            </div>
-            
-            <button class="password-submit" id="password-submit">ACCÉDER</button>
-            
-            <div class="error-message" id="password-error">Mot de passe incorrect</div>
+            <!-- Ajouter l'autre bouton ici si nécessaire -->
         </div>
         
-        <div class="menu-container" id="menu-container">
-            <h1 class="menu-title">GESTION DES FINANCES</h1>
+        <!-- Affichage public des cotisations -->
+        <div class="public-display" id="publicDisplay">
+            <h3 class="public-title" id="publicTitle">COTISATIONS</h3>
+            <div class="public-members" id="publicMembers"></div>
+            <div class="member-count" id="memberCount"></div>
+        </div>
+    </div>
+        
+        <!-- Panel Cotisations -->
+        <div class="content-panel" id="cotisationsPanel">
+            <button class="back-btn" onclick="backToMain()"><i class="fas fa-arrow-left"></i></button>
+            <h2 class="panel-header">GESTION DES COTISATIONS</h2>
             
-            <div class="menu-buttons">
-                <div class="menu-btn" id="cotisations-btn">
-                    <i class="fas fa-money-bill-wave menu-icon"></i>
-                    <div class="menu-btn-text">COTISATIONS</div>
-                </div>
-                
-                <div class="menu-btn" id="depenses-btn">
-                    <i class="fas fa-chart-pie menu-icon"></i>
-                    <div class="menu-btn-text">DÉPENSES</div>
-                </div>
+            <div class="years-container">
+                <button class="year-btn" onclick="selectYear(2023)">2023</button>
+                <button class="year-btn" onclick="selectYear(2024)">2024</button>
+                <button class="year-btn" onclick="selectYear(2025)">2025</button>
             </div>
+            
+            <div class="months-container" id="monthsContainer"></div>
+            
+            <div class="members-list" id="membersList"></div>
         </div>
         
-        <div class="content-panel" id="cotisations-panel">
-            <button class="back-btn" id="cotisations-back">← Retour</button>
-            <h2 class="panel-title">GESTION DES COTISATIONS</h2>
+        <!-- Panel Recherche par Personne -->
+        <div class="members-by-person-panel" id="membersByPersonPanel">
+            <button class="back-btn" onclick="backToMain()"><i class="fas fa-arrow-left"></i></button>
+            <h2 class="panel-header">RECHERCHE PAR PERSONNE</h2>
             
-            <div class="years-container" id="years-container">
-                <button class="year-btn" data-year="2023">2023</button>
-                <button class="year-btn" data-year="2024">2024</button>
-                <button class="year-btn" data-year="2025">2025</button>
-            </div>
+            <input type="text" class="search-box" id="memberSearch" placeholder="Rechercher un membre..." onkeyup="filterMembers()">
             
-            <div class="months-container" id="months-container"></div>
-            
-            <div class="status-buttons" id="status-buttons">
-                <button class="status-btn active" data-status="paid">Cotisés</button>
-                <button class="status-btn" data-status="not-paid">Non Cotisés</button>
-            </div>
-            
-            <div class="members-list" id="members-list"></div>
+            <div class="members-list" id="allMembersList"></div>
         </div>
         
-        <div class="content-panel" id="depenses-panel">
-            <button class="back-btn" id="depenses-back">← Retour</button>
-            <h2 class="panel-title">GESTION DES DÉPENSES</h2>
+        <!-- Panel Détail Membre -->
+        <div class="member-detail-panel" id="memberDetailPanel">
+            <button class="back-btn" onclick="backToMembersList()"><i class="fas fa-arrow-left"></i></button>
             
-            <div class="expenses-list" id="expenses-list"></div>
+            <div class="member-detail-header">
+                <h2 class="member-detail-name" id="memberDetailName"></h2>
+                <div class="member-detail-code" id="memberDetailCode"></div>
+            </div>
+            
+            <div class="member-years-container">
+                <button class="member-year-btn" onclick="selectMemberYear(2023)">2023</button>
+                <button class="member-year-btn" onclick="selectMemberYear(2024)">2024</button>
+                <button class="member-year-btn" onclick="selectMemberYear(2025)">2025</button>
+            </div>
+            
+            <div class="member-months-container" id="memberMonthsContainer"></div>
         </div>
     </div>
     
-    <div class="admin-btn" id="admin-btn">
+<!-- Overlay pour fond obscurci -->
+<div class="overlay" id="resultsOverlay" onclick="closeResults()"></div>
+
+<!-- Panel Résultats des Cotisations -->
+<div class="results-panel" id="resultsPanel">
+    <div class="results-header">
+        <h2 class="results-title" id="resultsTitle">RÉSULTATS DES COTISATIONS</h2>
+        <button class="back-btn" onclick="closeResults()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="results-actions">
+        <button class="action-btn" onclick="printResults()">
+            <i class="fas fa-print"></i> Imprimer
+        </button>
+    </div>
+    
+    <div class="results-content">
+        <div id="resultsList"></div>
+    </div>
+</div>
+  
+    <!-- Bouton Admin -->
+    <div class="admin-btn" onclick="showAdminPasswordPanel()">
         <i class="fas fa-lock"></i>
     </div>
     
-    <div class="admin-panel" id="admin-panel">
+    <!-- Panel Admin -->
+    <div class="admin-panel" id="adminPanel">
         <div class="admin-header">
-            <h2 class="admin-title">PANEL ADMIN</h2>
-            <button class="close-admin" id="close-admin">×</button>
+            <h2 class="admin-title">PANEL ADMINISTRATEUR</h2>
+            <button class="close-admin" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
         </div>
         
-        <div class="admin-options" id="admin-options">
-            <button class="admin-option-btn" id="admin-month-btn">Sélectionner Mois</button>
-            <button class="admin-option-btn" id="admin-expense-btn">Ajouter Dépense</button>
-        </div>
-        
-        <div class="month-selector" id="month-selector" style="display: none;">
-            <select id="year-select">
+        <div class="month-selector">
+            <select id="yearSelect">
                 <option value="2023">2023</option>
                 <option value="2024">2024</option>
                 <option value="2025">2025</option>
             </select>
-            
-            <select id="month-select">
+            <select id="monthSelect">
                 <option value="0">Janvier</option>
                 <option value="1">Février</option>
                 <option value="2">Mars</option>
@@ -789,34 +1103,28 @@
                 <option value="10">Novembre</option>
                 <option value="11">Décembre</option>
             </select>
-            
-            <button class="add-expense-btn" id="select-month-btn">Afficher</button>
-        </div>
-        
-        <div class="expense-form" id="expense-form" style="display: none;">
-            <div class="expense-field">
-                <label for="expense-title">Titre</label>
-                <input type="text" id="expense-title" placeholder="Titre de la dépense">
-            </div>
-            
-            <div class="expense-field">
-                <label for="expense-event">Événement</label>
-                <input type="text" id="expense-event" placeholder="Événement associé">
-            </div>
-            
-            <div class="expense-field">
-                <label for="expense-amount">Montant (FCFA)</label>
-                <input type="number" id="expense-amount" placeholder="Montant">
-            </div>
-            
-            <div class="expense-field">
-                <label for="expense-description">Description</label>
-                <textarea id="expense-description" placeholder="Description de la dépense"></textarea>
-            </div>
-            
-            <button class="add-expense-btn" id="add-expense-btn">Ajouter Dépense</button>
+            <button class="add-expense-btn" onclick="updatePublicDisplay()">Afficher Public</button>
         </div>
     </div>
+    
+    <!-- Panel Mot de Passe Admin -->
+  <!-- Panel Mot de Passe Admin -->
+<div class="password-panel" id="passwordPanel">
+    <div class="password-header">
+        <button class="back-btn-password" onclick="closePasswordPanel()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2 class="password-title">ACCÈS ADMIN</h2>
+    </div>
+    
+    <div class="password-field">
+        <input type="password" id="adminPassword" placeholder="Mot de passe administrateur">
+    </div>
+    
+    <button class="password-submit" onclick="checkAdminPassword()">ENTRER</button>
+    
+    <div class="password-error" id="passwordError">Mot de passe incorrect</div>
+</div>
 
     <script>
         // Configuration Firebase
@@ -835,387 +1143,454 @@
         const db = firebase.firestore();
         
         // Variables globales
-        const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
         let currentYear = null;
         let currentMonth = null;
-        let currentStatus = 'paid';
+        let currentMemberYear = null;
+        let currentMember = null;
         let members = [];
-        let expenses = [];
+        let allMembers = [];
         
-        // Références aux éléments DOM
-        const passwordPanel = document.getElementById('password-panel');
-        const passwordInput = document.getElementById('password-input');
-        const passwordSubmit = document.getElementById('password-submit');
-        const passwordError = document.getElementById('password-error');
-        const menuContainer = document.getElementById('menu-container');
-        const cotisationsBtn = document.getElementById('cotisations-btn');
-        const depensesBtn = document.getElementById('depenses-btn');
-        const cotisationsPanel = document.getElementById('cotisations-panel');
-        const cotisationsBack = document.getElementById('cotisations-back');
-        const depensesPanel = document.getElementById('depenses-panel');
-        const depensesBack = document.getElementById('depenses-back');
-        const yearsContainer = document.getElementById('years-container');
-        const monthsContainer = document.getElementById('months-container');
-        const statusButtons = document.getElementById('status-buttons');
-        const membersList = document.getElementById('members-list');
-        const expensesList = document.getElementById('expenses-list');
-        const adminBtn = document.getElementById('admin-btn');
-        const adminPanel = document.getElementById('admin-panel');
-        const closeAdmin = document.getElementById('close-admin');
-        const adminOptions = document.getElementById('admin-options');
-        const adminMonthBtn = document.getElementById('admin-month-btn');
-        const adminExpenseBtn = document.getElementById('admin-expense-btn');
-        const monthSelector = document.getElementById('month-selector');
-        const yearSelect = document.getElementById('year-select');
-        const monthSelect = document.getElementById('month-select');
-        const selectMonthBtn = document.getElementById('select-month-btn');
-        const expenseForm = document.getElementById('expense-form');
-        const expenseTitle = document.getElementById('expense-title');
-        const expenseEvent = document.getElementById('expense-event');
-        const expenseAmount = document.getElementById('expense-amount');
-        const expenseDescription = document.getElementById('expense-description');
-        const addExpenseBtn = document.getElementById('add-expense-btn');
-        
-        // Vérification du mot de passe
-        passwordSubmit.addEventListener('click', () => {
-            if (passwordInput.value === '2025') {
-                passwordPanel.style.display = 'none';
-                menuContainer.style.display = 'flex';
-                loadMembers();
-                loadExpenses();
-            } else {
-                passwordError.style.display = 'block';
-            }
-        });
-        
-        passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                passwordSubmit.click();
-            }
-        });
-        
-        // Navigation
-        cotisationsBtn.addEventListener('click', () => {
-            menuContainer.style.display = 'none';
-            cotisationsPanel.style.display = 'block';
-        });
-        
-        depensesBtn.addEventListener('click', () => {
-            menuContainer.style.display = 'none';
-            depensesPanel.style.display = 'block';
-            displayExpenses();
-        });
-        
-        cotisationsBack.addEventListener('click', () => {
-            cotisationsPanel.style.display = 'none';
-            menuContainer.style.display = 'flex';
-        });
-        
-        depensesBack.addEventListener('click', () => {
-            depensesPanel.style.display = 'none';
-            menuContainer.style.display = 'flex';
-        });
-        
-        // Gestion des années
-        yearsContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('year-btn')) {
-                document.querySelectorAll('.year-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                e.target.classList.add('active');
-                
-                currentYear = e.target.dataset.year;
-                displayMonths();
-            }
-        });
-        
-        // Affichage des mois
-        function displayMonths() {
-            monthsContainer.innerHTML = '';
-            
-            for (let i = 0; i < 12; i++) {
-                const monthBtn = document.createElement('div');
-                monthBtn.className = 'month-btn';
-                monthBtn.textContent = months[i];
-                monthBtn.dataset.month = i;
-                
-                monthBtn.addEventListener('click', () => {
-                    currentMonth = i;
-                    displayMembers();
-                });
-                
-                monthsContainer.appendChild(monthBtn);
-            }
-        }
-        
-        // Gestion des statuts (cotisé/non cotisé)
-        statusButtons.addEventListener('click', (e) => {
-            if (e.target.classList.contains('status-btn')) {
-                document.querySelectorAll('.status-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                e.target.classList.add('active');
-                
-                currentStatus = e.target.dataset.status;
-                displayMembers();
-            }
-        });
-        
-        // Chargement des membres depuis Firebase
+        // Charger les membres depuis Firebase
         async function loadMembers() {
             try {
                 const snapshot = await db.collection("members").get();
                 members = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Initialiser l'affichage avec l'année courante
-                const currentDate = new Date();
-                currentYear = currentDate.getFullYear().toString();
-                
-                document.querySelectorAll('.year-btn').forEach(btn => {
-                    if (btn.dataset.year === currentYear) {
-                        btn.classList.add('active');
-                    }
+                // Trier par ordre alphabétique
+                members.sort((a, b) => {
+                    const nameA = `${a.firstname} ${a.lastname}`.toUpperCase();
+                    const nameB = `${b.firstname} ${b.lastname}`.toUpperCase();
+                    return nameA.localeCompare(nameB);
                 });
                 
-                displayMonths();
+                allMembers = [...members];
+                
+                // Charger l'affichage public s'il existe
+                const publicDisplay = localStorage.getItem('publicDisplay');
+                if (publicDisplay) {
+                    const data = JSON.parse(publicDisplay);
+                    displayPublicMembers(data.year, data.month);
+                }
             } catch (error) {
                 console.error("Erreur de chargement des membres:", error);
             }
         }
         
-        // Affichage des membres selon le statut
-        function displayMembers() {
-            if (currentYear === null || currentMonth === null) return;
+        // Afficher le panel des cotisations
+        function showCotisations() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('cotisationsPanel').style.display = 'block';
+            document.getElementById('membersByPersonPanel').style.display = 'none';
+        }
+        
+        // Afficher le panel de recherche par personne
+        function showMembersByPerson() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('cotisationsPanel').style.display = 'none';
+            document.getElementById('membersByPersonPanel').style.display = 'block';
             
-            membersList.innerHTML = '';
+            displayAllMembers();
+        }
+        
+        // Retour au menu principal
+        function backToMain() {
+            document.getElementById('cotisationsPanel').style.display = 'none';
+            document.getElementById('membersByPersonPanel').style.display = 'none';
+            document.getElementById('memberDetailPanel').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'block';
+        }
+        
+        // Retour à la liste des membres
+        function backToMembersList() {
+            document.getElementById('memberDetailPanel').style.display = 'none';
+            document.getElementById('membersByPersonPanel').style.display = 'block';
+        }
+        
+        // Sélectionner une année
+        function selectYear(year) {
+            currentYear = year;
+            const yearButtons = document.querySelectorAll('.year-btn');
+            yearButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
             
-            const monthKey = `${currentYear}-${currentMonth}`;
+            displayMonths();
+        }
+        
+        // Afficher les mois pour l'année sélectionnée
+        function displayMonths() {
+            const monthsContainer = document.getElementById('monthsContainer');
+            monthsContainer.innerHTML = '';
             
-            const filteredMembers = members.filter(member => {
-                const contributions = member.contributions || {};
-                const monthlyContributions = contributions.Mensuelle || {};
-                const yearContributions = monthlyContributions[currentYear] || Array(12).fill(false);
-                
-                if (currentStatus === 'paid') {
-                    return yearContributions[currentMonth] === true;
-                } else {
-                    return yearContributions[currentMonth] !== true;
-                }
-            });
+            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
             
-            if (filteredMembers.length === 0) {
-                membersList.innerHTML = `<div class="member-item">Aucun membre ${currentStatus === 'paid' ? 'cotisé' : 'non cotisé'} pour ce mois</div>`;
-                return;
+            for (let i = 0; i < 12; i++) {
+                const monthBtn = document.createElement('div');
+                monthBtn.className = 'month-btn';
+                monthBtn.textContent = monthNames[i];
+                monthBtn.onclick = () => {
+                    selectMonth(i);
+                    showMembersForMonth();
+                };
+                monthsContainer.appendChild(monthBtn);
             }
+        }
+        
+        // Sélectionner un mois
+        function selectMonth(month) {
+            currentMonth = month;
+        }
+        
+        // Afficher les membres pour le mois sélectionné
+  // Afficher les membres pour le mois sélectionné dans une nouvelle page interne
+function showMembersForMonth() {
+    if (!currentYear || currentMonth === null) {
+        alert('Veuillez sélectionner une année et un mois');
+        return;
+    }
+    
+    // Cacher les autres panels et afficher le panel des résultats
+    document.getElementById('cotisationsPanel').style.display = 'none';
+    document.getElementById('resultsPanel').style.display = 'block';
+    
+    const monthKey = `${currentYear}-${currentMonth}`;
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    
+    // Mettre à jour le titre
+    document.getElementById('resultsTitle').textContent = `COTISATIONS - ${monthNames[currentMonth]} ${currentYear}`;
+    
+ // À l'intérieur de showMembersForMonth(), remplacez:
+const resultsList = document.getElementById('resultsList');
+resultsList.innerHTML = '';
+    
+    // Membres cotisés
+    const paidTitle = document.createElement('div');
+    paidTitle.className = 'panel-header';
+    paidTitle.textContent = 'MEMBRES COTISÉS';
+    paidTitle.style.color = 'green';
+    paidTitle.style.marginTop = '0';
+    resultsList.appendChild(paidTitle);
+    
+    let paidCount = 0;
+    
+    members.forEach(member => {
+        const hasPaid = member.contributions && member.contributions[monthKey];
+        
+        if (hasPaid) {
+            paidCount++;
+            const memberItem = document.createElement('div');
+            memberItem.className = 'member-item paid';
+            memberItem.innerHTML = `
+                <span>${paidCount}. ${member.firstname} ${member.lastname}</span>
+                <span>${member.code}</span>
+            `;
+            resultsList.appendChild(memberItem);
+        }
+    });
+    
+    if (paidCount === 0) {
+        const noPaid = document.createElement('div');
+        noPaid.className = 'member-item';
+        noPaid.textContent = 'Aucun membre cotisé pour ce mois';
+        resultsList.appendChild(noPaid);
+    }
+    
+    // Membres non cotisés
+    const unpaidTitle = document.createElement('div');
+    unpaidTitle.className = 'panel-header';
+    unpaidTitle.textContent = 'MEMBRES NON COTISÉS';
+    unpaidTitle.style.color = 'red';
+    unpaidTitle.style.marginTop = '2rem';
+    resultsList.appendChild(unpaidTitle);
+    
+    let unpaidCount = 0;
+    
+    members.forEach(member => {
+        const hasPaid = member.contributions && member.contributions[monthKey];
+        
+        if (!hasPaid) {
+            unpaidCount++;
+            const memberItem = document.createElement('div');
+            memberItem.className = 'member-item unpaid';
+            memberItem.innerHTML = `
+                <span>${unpaidCount}. ${member.firstname} ${member.lastname}</span>
+                <span>${member.code}</span>
+            `;
+            resultsList.appendChild(memberItem);
+        }
+    });
+    
+    if (unpaidCount === 0) {
+        const noUnpaid = document.createElement('div');
+        noUnpaid.className = 'member-item';
+        noUnpaid.textContent = 'Tous les membres sont cotisés pour ce mois';
+        resultsList.appendChild(noUnpaid);
+    }
+    
+    // Ajouter le résumé
+    const summary = document.createElement('div');
+    summary.className = 'panel-header';
+    summary.innerHTML = `
+        <div style="color: green;">Membres cotisés: ${paidCount}</div>
+        <div style="color: red;">Membres non cotisés: ${unpaidCount}</div>
+        <div>Total: ${members.length}</div>
+    `;
+    summary.style.marginTop = '2rem';
+    resultsList.appendChild(summary);
+}
+
+// Fonction utilitaire pour obtenir le nom du mois
+function getMonthName(monthIndex) {
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    return monthNames[monthIndex];
+}
+        // Retour au panel des cotisations
+// Retour au panel des cotisations
+function backToCotisations() {
+    document.getElementById('resultsPanel').style.display = 'none';
+    document.getElementById('cotisationsPanel').style.display = 'block';
+}
+
+// Imprimer les résultats
+function printResults() {
+    const originalContents = document.body.innerHTML;
+    const printContents = document.getElementById('resultsPanel').innerHTML;
+    
+    // Cacher les boutons pour l'impression
+    const printWithoutButtons = printContents
+        .replace(/<button[^>]*>.*?<\/button>/g, '')
+        .replace(/results-header/, 'print-header')
+        .replace(/results-actions/, 'print-actions');
+    
+    document.body.innerHTML = `
+        <div class="print-container">
+            ${printWithoutButtons}
+        </div>
+        <button onclick="window.location.reload()" style="position:fixed; top:20px; right:20px; padding:10px; background:#073332; color:white; border:none; border-radius:5px;">
+            Retour
+        </button>
+    `;
+    
+    window.print();
+    document.body.innerHTML = originalContents;
+    window.location.reload();
+}
+
+// Modifiez la fonction backToMain pour inclure le resultsPanel
+function backToMain() {
+    document.getElementById('cotisationsPanel').style.display = 'none';
+    document.getElementById('membersByPersonPanel').style.display = 'none';
+    document.getElementById('memberDetailPanel').style.display = 'none';
+    document.getElementById('resultsPanel').style.display = 'none';
+    document.getElementById('mainMenu').style.display = 'block';
+    
+    // Toujours afficher l'écran public (même s'il est réduit)
+    document.getElementById('publicDisplay').style.display = 'block';
+}
+        // Afficher tous les membres pour la recherche
+        function displayAllMembers() {
+            const allMembersList = document.getElementById('allMembersList');
+            allMembersList.innerHTML = '';
             
-            filteredMembers.forEach(member => {
+            members.forEach(member => {
                 const memberItem = document.createElement('div');
-                memberItem.className = `member-item ${currentStatus === 'paid' ? 'paid' : 'not-paid'}`;
-                
+                memberItem.className = 'member-person-item';
                 memberItem.innerHTML = `
                     <div>${member.firstname} ${member.lastname}</div>
                     <div>${member.code}</div>
                 `;
-                
-                membersList.appendChild(memberItem);
+                memberItem.onclick = () => showMemberDetail(member);
+                allMembersList.appendChild(memberItem);
             });
         }
         
-        // Panel admin
-        adminBtn.addEventListener('click', () => {
-            const adminPassword = prompt("Veuillez entrer le mot de passe administrateur:");
-            if (adminPassword === "ADMIN123") {
-                adminPanel.style.display = 'block';
+        // Filtrer les membres selon la recherche
+        function filterMembers() {
+            const searchText = document.getElementById('memberSearch').value.toLowerCase();
+            
+            if (searchText === '') {
+                members = [...allMembers];
             } else {
-                alert("Mot de passe incorrect");
-            }
-        });
-        
-        closeAdmin.addEventListener('click', () => {
-            adminPanel.style.display = 'none';
-            adminOptions.style.display = 'flex';
-            monthSelector.style.display = 'none';
-            expenseForm.style.display = 'none';
-        });
-        
-        adminMonthBtn.addEventListener('click', () => {
-            adminOptions.style.display = 'none';
-            monthSelector.style.display = 'flex';
-        });
-        
-        adminExpenseBtn.addEventListener('click', () => {
-            adminOptions.style.display = 'none';
-            expenseForm.style.display = 'flex';
-        });
-        
-        selectMonthBtn.addEventListener('click', () => {
-            const selectedYear = yearSelect.value;
-            const selectedMonth = monthSelect.value;
-            
-            // Ici, vous pouvez implémenter la logique pour afficher les cotisations du mois sélectionné
-            // sur la page d'accueil avant l'authentification
-            alert(`Mois sélectionné: ${months[selectedMonth]} ${selectedYear}`);
-            
-            adminPanel.style.display = 'none';
-            adminOptions.style.display = 'flex';
-            monthSelector.style.display = 'none';
-        });
-        
-        // Gestion des dépenses
-        addExpenseBtn.addEventListener('click', async () => {
-            const title = expenseTitle.value.trim();
-            const event = expenseEvent.value.trim();
-            const amount = parseFloat(expenseAmount.value);
-            const description = expenseDescription.value.trim();
-            
-            if (!title || isNaN(amount)) {
-                alert("Veuillez remplir au moins le titre et le montant");
-                return;
+                members = allMembers.filter(member => 
+                    member.firstname.toLowerCase().includes(searchText) ||
+                    member.lastname.toLowerCase().includes(searchText) ||
+                    member.code.toLowerCase().includes(searchText)
+                );
             }
             
-            try {
-                await db.collection("expenses").add({
-                    title,
-                    event,
-                    amount,
-                    description,
-                    date: new Date().toISOString()
-                });
-                
-                alert("Dépense ajoutée avec succès!");
-                
-                // Réinitialiser le formulaire
-                expenseTitle.value = '';
-                expenseEvent.value = '';
-                expenseAmount.value = '';
-                expenseDescription.value = '';
-                
-                // Recharger les dépenses
-                loadExpenses();
-                
-                adminPanel.style.display = 'none';
-                adminOptions.style.display = 'flex';
-                expenseForm.style.display = 'none';
-            } catch (error) {
-                console.error("Erreur lors de l'ajout de la dépense:", error);
-                alert("Une erreur est survenue lors de l'ajout de la dépense");
-            }
-        });
+            displayAllMembers();
+        }
         
-        // Chargement des dépenses depuis Firebase
-        async function loadExpenses() {
-            try {
-                const snapshot = await db.collection("expenses").orderBy("date", "desc").get();
-                expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                displayExpenses();
-            } catch (error) {
-                console.error("Erreur de chargement des dépenses:", error);
+        // Afficher les détails d'un membre
+        function showMemberDetail(member) {
+            currentMember = member;
+            
+            document.getElementById('membersByPersonPanel').style.display = 'none';
+            document.getElementById('memberDetailPanel').style.display = 'block';
+            
+            document.getElementById('memberDetailName').textContent = `${member.firstname} ${member.lastname}`;
+            document.getElementById('memberDetailCode').textContent = `Code: ${member.code}`;
+            
+            selectMemberYear(2023);
+        }
+        // Fermer le panneau de mot de passe
+function closePasswordPanel() {
+    document.getElementById('passwordPanel').style.display = 'none';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('passwordError').style.display = 'none';
+}
+        // Sélectionner une année pour le membre
+        function selectMemberYear(year) {
+            currentMemberYear = year;
+            const yearButtons = document.querySelectorAll('.member-year-btn');
+            yearButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            displayMemberMonths();
+        }
+        
+        // Afficher les mois pour le membre sélectionné
+        function displayMemberMonths() {
+            const monthsContainer = document.getElementById('memberMonthsContainer');
+            monthsContainer.innerHTML = '';
+            
+            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            
+            for (let i = 0; i < 12; i++) {
+                const monthKey = `${currentMemberYear}-${i}`;
+                const hasPaid = currentMember.contributions && currentMember.contributions[monthKey];
+                
+                const monthItem = document.createElement('div');
+                monthItem.className = `member-month-item ${hasPaid ? 'paid' : 'unpaid'}`;
+                monthItem.textContent = monthNames[i];
+                
+                monthsContainer.appendChild(monthItem);
             }
         }
         
-        // Affichage des dépenses
-        function displayExpenses() {
-            expensesList.innerHTML = '';
-            
-            if (expenses.length === 0) {
-                expensesList.innerHTML = '<div class="expense-item">Aucune dépense enregistrée</div>';
-                return;
-            }
-            
-            let total = 0;
-            
-            expenses.forEach(expense => {
-                total += expense.amount;
-                
-                const expenseItem = document.createElement('div');
-                expenseItem.className = 'expense-item';
-                
-                expenseItem.innerHTML = `
-                    <div class="expense-header">
-                        <div class="expense-title">${expense.title}</div>
-                        <div class="expense-amount">${expense.amount.toLocaleString()} FCFA</div>
-                    </div>
-                    ${expense.event ? `<div class="expense-event">${expense.event}</div>` : ''}
-                    ${expense.description ? `<div class="expense-description">${expense.description}</div>` : ''}
-                    <button class="delete-expense" data-id="${expense.id}">×</button>
-                `;
-                
-                expensesList.appendChild(expenseItem);
-            });
-            
-            // Ajout du total
-            const totalElement = document.createElement('div');
-            totalElement.className = 'total-expenses';
-            totalElement.textContent = `Total: ${total.toLocaleString()} FCFA`;
-            expensesList.appendChild(totalElement);
-            
-            // Gestion de la suppression des dépenses
-            document.querySelectorAll('.delete-expense').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    const expenseId = e.target.dataset.id;
-                    if (confirm("Êtes-vous sûr de vouloir supprimer cette dépense?")) {
-                        try {
-                            await db.collection("expenses").doc(expenseId).delete();
-                            loadExpenses();
-                        } catch (error) {
-                            console.error("Erreur lors de la suppression:", error);
-                            alert("Une erreur est survenue lors de la suppression");
-                        }
-                    }
-                });
-            });
+        // Afficher le panel de mot de passe admin
+        function showAdminPasswordPanel() {
+            document.getElementById('passwordPanel').style.display = 'block';
         }
         
-        // Initialisation des particules d'arrière-plan
-        function initParticles() {
-            const container = document.getElementById('particles-js');
-            const particleCount = Math.floor(window.innerWidth / 15);
+        // Vérifier le mot de passe admin
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            const errorElement = document.getElementById('passwordError');
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                const size = Math.random() * 6 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 120 - 20}%`;
-                
-                const duration = Math.random() * 20 + 10;
-                const delay = Math.random() * 5;
-                particle.style.animation = `float ${duration}s linear ${delay}s infinite`;
-                
-                particle.style.opacity = Math.random() * 0.2;
-                
-                container.appendChild(particle);
+            if (password === 'ADMIN123') {
+                document.getElementById('passwordPanel').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+                errorElement.style.display = 'none';
+            } else {
+                errorElement.style.display = 'block';
             }
         }
         
-        // Effet de lumière qui suit la souris
-        document.addEventListener('mousemove', (e) => {
-            const spotlight = document.querySelector('.spotlight');
-            spotlight.style.left = `${e.clientX}px`;
-            spotlight.style.top = `${e.clientY}px`;
-        });
+        // Fermer le panel admin
+        function closeAdminPanel() {
+            document.getElementById('adminPanel').style.display = 'none';
+        }
         
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            initParticles();
+        // Mettre à jour l'affichage public
+      // Mettre à jour l'affichage public
+function updatePublicDisplay() {
+    const year = document.getElementById('yearSelect').value;
+    const month = document.getElementById('monthSelect').value;
+    
+    // Sauvegarder dans le localStorage
+    localStorage.setItem('publicDisplay', JSON.stringify({
+        year: year,
+        month: month
+    }));
+    
+    // Afficher uniquement dans la section publique de la page d'accueil
+    displayPublicMembers(year, month);
+    closeAdminPanel();
+    
+    // Retourner à la page d'accueil
+    backToMain();
+}
+        
+        // Afficher les membres publics
+        function displayPublicMembers(year, month) {
+            const publicTitle = document.getElementById('publicTitle');
+            const publicMembers = document.getElementById('publicMembers');
+            const memberCount = document.getElementById('memberCount');
             
-            // Définir l'année courante par défaut
-            const currentDate = new Date();
-            currentYear = currentDate.getFullYear().toString();
+            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            publicTitle.textContent = `COTISATIONS - ${monthNames[month]} ${year}`;
             
-            // Sélectionner l'année courante
-            document.querySelectorAll('.year-btn').forEach(btn => {
-                if (btn.dataset.year === currentYear) {
-                    btn.classList.add('active');
+            publicMembers.innerHTML = '';
+            
+            const monthKey = `${year}-${month}`;
+            
+            // Membres cotisés
+            let paidCount = 0;
+            let unpaidCount = 0;
+            
+            // Afficher les membres cotisés
+            members.forEach(member => {
+                const hasPaid = member.contributions && member.contributions[monthKey];
+                
+                if (hasPaid) {
+                    paidCount++;
+                    const memberElement = document.createElement('div');
+                    memberElement.className = 'public-member paid';
+                    memberElement.innerHTML = `
+                        <span>${paidCount}. ${member.firstname} ${member.lastname}</span>
+                        <span>${member.code}</span>
+                    `;
+                    publicMembers.appendChild(memberElement);
                 }
             });
             
-            displayMonths();
+            // Afficher les membres non cotisés
+            members.forEach(member => {
+                const hasPaid = member.contributions && member.contributions[monthKey];
+                
+                if (!hasPaid) {
+                    unpaidCount++;
+                    const memberElement = document.createElement('div');
+                    memberElement.className = 'public-member unpaid';
+                    memberElement.innerHTML = `
+                        <span>${unpaidCount}. ${member.firstname} ${member.lastname}</span>
+                        <span>${member.code}</span>
+                    `;
+                    publicMembers.appendChild(memberElement);
+                }
+            });
+            
+            memberCount.innerHTML = `
+                <div>Membres cotisés: <span style="color: green">${paidCount}</span></div>
+                <div>Membres non cotisés: <span style="color: red">${unpaidCount}</span></div>
+            `;
+            
+            document.getElementById('publicDisplay').style.display = 'block';
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMembers();
+            
+            // Ajouter l'option de recherche par personne au menu
+            const menuButtons = document.querySelector('.menu-buttons');
+            const personBtn = document.createElement('div');
+            personBtn.className = 'menu-btn';
+            personBtn.innerHTML = `
+                <i class="fas fa-users"></i>
+                <span>PAR PERSONNE</span>
+            `;
+            personBtn.onclick = showMembersByPerson;
+            menuButtons.appendChild(personBtn);
+            
+            // Ajouter un écouteur pour la touche Entrée dans le mot de passe admin
+            document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAdminPassword();
+                }
+            });
         });
     </script>
 </body>
-</html> 
+</html>
