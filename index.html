@@ -1383,7 +1383,16 @@ function printResults() {
                     border-bottom: 2px solid #073332;
                     padding-bottom: 10px;
                 }
+                .logo-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                }
                 .logo {
+                    width: 70px;
+                    height: 70px;
+                }
+                .org-name {
                     font-weight: bold;
                     font-size: 22px;
                     color: #073332;
@@ -1397,6 +1406,9 @@ function printResults() {
                     font-weight: bold;
                     margin: 20px 0;
                     color: #073332;
+                    padding: 10px;
+                    background-color: #f5f5f5;
+                    border-radius: 5px;
                 }
                 table {
                     width: 100%;
@@ -1417,16 +1429,22 @@ function printResults() {
                     margin-bottom: 30px;
                 }
                 .paid-row {
-                    background-color: #d4edda;
+                    background-color: #d4f0d4; /* Vert clair */
                 }
                 .unpaid-row {
-                    background-color: #f8d7da;
+                    background-color: #ffcccc; /* Rouge clair */
                 }
                 .footer {
                     margin-top: 50px;
                     font-size: 12px;
                     text-align: center;
                     color: #555;
+                    border-top: 1px solid #ccc;
+                    padding-top: 15px;
+                }
+                .contact-info {
+                    margin-top: 10px;
+                    line-height: 1.6;
                 }
                 @media print {
                     body {
@@ -1444,7 +1462,10 @@ function printResults() {
         </head>
         <body>
             <div class="header">
-                <div class="logo">ANSAR ALMOUYASSAR</div>
+                <div class="logo-container">
+                    <img src="https://i.postimg.cc/ZYXhnnbN/logo.png" alt="Logo ANSAR" class="logo">
+                    <div class="org-name">ANSAR ALMOUYASSAR</div>
+                </div>
                 <div class="date">Imprimé le ${dateStr} à ${timeStr}</div>
             </div>
             
@@ -1529,7 +1550,7 @@ function printResults() {
     } else {
         printContent += `
             <tr class="unpaid-row">
-                <td colspan="3" style="text-align: center;">Tous les membres ont cotisés pour ce mois</td>
+                <td colspan="3" style="text-align: center;">Tous les membres sont cotisés pour ce mois</td>
             </tr>
         `;
     }
@@ -1539,9 +1560,12 @@ function printResults() {
     // Footer avec les informations de contact
     printContent += `
         <div class="footer">
-            <p>POUR TOUS RECLAMATION VEUILLEZ CONTACTER LE TRESORIER GENERAL RESPONSABLE DES COTISATIONS MOUHIDINE NIASS 77 184 77 37 OU LA TRESORIERE OUREY DIONE 77 290 08 08.</p>
-            <p>COMPTE WAVE ET ORANGE MONEY DE ANSAR : +221 77 290 08 08 VOUS POUVEZ PAYER DIRECTEMENT DANS VOTRE APPLICATION ANSAR ALMOUYASSAR DANS VOTRE PAGE PERSONNEL.</p>
-            <p>ENSEMBLE, SOYONS RÉGULIERS POUR CONTRIBUER AU BON DÉVELOPPEMENT DE NOTRE ASSOCIATION.</p>
+            <div class="contact-info">
+                <p><strong>POUR TOUS RÉCLAMATIONS VEUILLEZ CONTACTER :</strong></p>
+                <p>Le Trésorier Général responsable des cotisations : MOUHIDINE NIASS - 77 184 77 37 où  la Trésorière : OUREY DIONE - 77 290 08 08</p> 
+                <p>Vous pouvez payer directement depuis votre application ANSAR ALMOUYASSAR dans votre page personnelle </p>
+                 <p><strong>ENSEMBLE, SOYONS RÉGULIERS POUR CONTRIBUER AU BON DÉVELOPPEMENT DE NOTRE ASSOCIATION</strong></p>
+            </div>
         </div>
     `;
     
@@ -1552,11 +1576,16 @@ function printResults() {
     printWindow.document.write(printContent);
     printWindow.document.close();
     
-    // Attendre que le contenu soit chargé avant d'imprimer
-    printWindow.onload = function() {
-        printWindow.print();
-        // printWindow.close(); // Décommentez cette ligne si vous voulez fermer la fenêtre après impression
-    };
+    // Attendre que l'image soit chargée avant d'imprimer
+    const checkImageLoaded = setInterval(function() {
+        if (printWindow.document.readyState === 'complete') {
+            clearInterval(checkImageLoaded);
+            setTimeout(function() {
+                printWindow.print();
+                // printWindow.close(); // Décommentez cette ligne si vous voulez fermer la fenêtre après impression
+            }, 500);
+        }
+    }, 100);
 }
 
 // Modifiez la fonction backToMain pour inclure le resultsPanel
@@ -1777,4 +1806,4 @@ function updatePublicDisplay() {
         });
     </script>
 </body>
-</html>  
+</html>
