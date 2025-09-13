@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Orbitron:wght@400;500;600;700&display=swap');
@@ -1064,6 +1066,9 @@
         <button class="action-btn" onclick="printResults()">
             <i class="fas fa-print"></i> Imprimer
         </button>
+       <button class="action-btn" onclick="shareResults()">
+        <i class="fas fa-share-alt"></i> Partager
+    </button>
     </div>
     
     <div class="results-content">
@@ -1355,7 +1360,356 @@ function closeResults() {
     document.getElementById('resultsOverlay').style.display = 'none';
     document.getElementById('cotisationsPanel').style.display = 'block';
 }
-// Imprimer les résultats
+// partagerr les résultats
+ // Fonction pour partager les résultats en PDF
+async function shareResults() {
+    try {
+        // Créer un contenu HTML pour le PDF
+        const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('fr-FR');
+        const timeStr = now.toLocaleTimeString('fr-FR');
+        
+        let pdfContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Liste des Cotisations - ${monthNames[currentMonth]} ${currentYear}</title>
+                <meta charset="UTF-8">
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 15mm;
+                        color: black;
+                    }
+                    .header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 20px;
+                        border-bottom: 2px solid #073332;
+                        padding-bottom: 10px;
+                    }
+                    .logo-container {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    .logo {
+                        width: 60px;
+                        height: 60px;
+                    }
+                    .org-name {
+                        font-weight: bold;
+                        font-size: 20px;
+                        color: #073332;
+                    }
+                    .date {
+                        font-size: 12px;
+                    }
+                    .title {
+                        text-align: center;
+                        font-size: 18px;
+                        font-weight: bold;
+                        margin: 20px 0;
+                        color: #073332;
+                        padding: 8px;
+                        background-color: #f5f5f5;
+                        border-radius: 4px;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 20px;
+                        font-size: 12px;
+                    }
+                    th {
+                        background-color: #073332;
+                        color: white;
+                        padding: 8px;
+                        text-align: left;
+                    }
+                    td {
+                        padding: 6px;
+                        border-bottom: 1px solid #ddd;
+                    }
+                    .paid-row {
+                        background-color: #d4f0d4; /* Vert clair */
+                    }
+                    .unpaid-row {
+                        background-color: #ffcccc; /* Rouge clair */
+                    }
+                    .footer {
+                        margin-top: 30px;
+                        font-size: 10px;
+                        text-align: center;
+                        color: #555;
+                        border-top: 1px solid #ccc;
+                        padding-top: 10px;
+                    }
+                    .contact-info {
+                        margin-top: 8px;
+                        line-height: 1.4;
+                    }
+                    .section-title {
+                        font-size: 14px;
+                        margin: 15px 0 10px 0;
+                        color: #073332;
+                    }
+                    @media print {
+                        body {
+                            margin: 0;
+                            padding: 0;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div class="logo-container">
+                        <img src="https://i.postimg.cc/ZYXhnnbN/logo.png" alt="Logo ANSAR" class="logo">
+                        <div class="org-name">ANSAR ALMOUYASSAR</div>
+                    </div>
+                    <div class="date">Généré le ${dateStr} à ${timeStr}</div>
+                </div>
+                
+                <div class="title">LISTE DES COTISATIONS - ${monthNames[currentMonth]} ${currentYear}</div>
+        `;
+        
+        // Membres cotisés
+        const monthKey = `${currentYear}-${currentMonth}`;
+        let paidCount = 0;
+        let paidMembers = [];
+        
+        members.forEach(member => {
+            const hasPaid = member.contributions && member.contributions[monthKey];
+            if (hasPaid) {
+                paidCount++;
+                paidMembers.push(member);
+            }
+        });
+        
+        pdfContent += `
+            <div class="section-title">MEMBRES COTISÉS (${paidCount})</div>
+            <table>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom & Prénom</th>
+                    <th>Code</th>
+                </tr>
+        `;
+        
+        if (paidCount > 0) {
+            paidMembers.forEach((member, index) => {
+                pdfContent += `
+                    <tr class="paid-row">
+                        <td>${index + 1}</td>
+                        <td>${member.firstname} ${member.lastname}</td>
+                        <td>${member.code}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            pdfContent += `
+                <tr class="paid-row">
+                    <td colspan="3" style="text-align: center;">Aucun membre cotisé pour ce mois</td>
+                </tr>
+            `;
+        }
+        
+        pdfContent += `</table>`;
+        
+        // Membres non cotisés
+        let unpaidCount = 0;
+        let unpaidMembers = [];
+        
+        members.forEach(member => {
+            const hasPaid = member.contributions && member.contributions[monthKey];
+            if (!hasPaid) {
+                unpaidCount++;
+                unpaidMembers.push(member);
+            }
+        });
+        
+        pdfContent += `
+            <div class="section-title">MEMBRES NON COTISÉS (${unpaidCount})</div>
+            <table>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom & Prénom</th>
+                    <th>Code</th>
+                </tr>
+        `;
+        
+        if (unpaidCount > 0) {
+            unpaidMembers.forEach((member, index) => {
+                pdfContent += `
+                    <tr class="unpaid-row">
+                        <td>${index + 1}</td>
+                        <td>${member.firstname} ${member.lastname}</td>
+                        <td>${member.code}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            pdfContent += `
+                <tr class="unpaid-row">
+                    <td colspan="3" style="text-align: center;">Tous les membres sont cotisés pour ce mois</td>
+                </tr>
+            `;
+        }
+        
+        pdfContent += `</table>`;
+        
+        // Footer avec les informations de contact
+        pdfContent += `
+            <div class="footer">
+                <div class="contact-info">
+                    <p><strong>POUR TOUS RÉCLAMATIONS VEUILLEZ CONTACTER :</strong></p>
+                    <p>Le Trésorier Général responsable des cotisations : MOUHIDINE NIASS - 77 184 77 37</p>
+                    <p>La Trésorière : OUREY DIONE - 77 290 08 08</p>
+                    <p>Compte WAVE et Orange Money de ANSAR : +221 77 290 08 08</p>
+                    <p>Ou bien payer directement dans votre application dans votre page personnelle</p>
+                    <p><strong>ENSEMBLE, SOYONS RÉGULIERS POUR CONTRIBUER AU BON DÉVELOPPEMENT DE NOTRE ASSOCIATION</strong></p>
+                </div>
+            </div>
+        `;
+        
+        pdfContent += `</body></html>`;
+        
+        // Créer une fenêtre pour le PDF
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(pdfContent);
+        printWindow.document.close();
+        
+        // Attendre le chargement complet
+        printWindow.onload = function() {
+            // Options pour html2pdf
+            const options = {
+                margin: [15, 15, 15, 15],
+                filename: `cotisations_${monthNames[currentMonth]}_${currentYear}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            // Utiliser html2pdf pour générer le PDF
+            printWindow.html2pdf().set(options).from(printWindow.document.body).toPdf().get('pdf').then(function(pdf) {
+                const pdfBlob = pdf.output('blob');
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                
+                // Fermer la fenêtre temporaire
+                printWindow.close();
+                
+                // Afficher le menu de partage
+                showShareMenu(pdfUrl, `cotisations_${monthNames[currentMonth]}_${currentYear}.pdf`);
+            });
+        };
+        
+    } catch (error) {
+        console.error('Erreur lors de la génération du PDF:', error);
+        alert('Une erreur est survenue lors de la génération du PDF.');
+    }
+}
+      
+      // Fonction pour afficher le menu de partage
+function showShareMenu(pdfUrl, filename) {
+    // Créer un menu de partage
+    const shareMenu = document.createElement('div');
+    shareMenu.style.position = 'fixed';
+    shareMenu.style.top = '50%';
+    shareMenu.style.left = '50%';
+    shareMenu.style.transform = 'translate(-50%, -50%)';
+    shareMenu.style.background = 'white';
+    shareMenu.style.padding = '20px';
+    shareMenu.style.borderRadius = '10px';
+    shareMenu.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+    shareMenu.style.zIndex = '10000';
+    shareMenu.style.width = '300px';
+    shareMenu.style.textAlign = 'center';
+    
+    shareMenu.innerHTML = `
+        <h3 style="margin-top: 0; color: #073332;">Options de partage</h3>
+        <button style="margin: 5px; padding: 10px; width: 100%; background: #25D366; color: white; border: none; border-radius: 5px; cursor: pointer;" onclick="shareViaWhatsApp('${pdfUrl}', '${filename}')">
+            <i class="fab fa-whatsapp"></i> Partager sur WhatsApp
+        </button>
+        <button style="margin: 5px; padding: 10px; width: 100%; background: #1284C9; color: white; border: none; border-radius: 5px; cursor: pointer;" onclick="shareViaEmail('${pdfUrl}', '${filename}')">
+            <i class="fas fa-envelope"></i> Partager par Email
+        </button>
+        <button style="margin: 5px; padding: 10px; width: 100%; background: #073332; color: white; border: none; border-radius: 5px; cursor: pointer;" onclick="downloadPDF('${pdfUrl}', '${filename}')">
+            <i class="fas fa-download"></i> Télécharger le PDF
+        </button>
+        <button style="margin: 5px; padding: 10px; width: 100%; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;" onclick="closeShareMenu()">
+            <i class="fas fa-times"></i> Annuler
+        </button>
+    `;
+    
+    // Ajouter l'overlay
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.zIndex = '9999';
+    overlay.id = 'shareOverlay';
+    overlay.onclick = closeShareMenu;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(shareMenu);
+}
+      
+      // Fonction pour partager via WhatsApp
+function shareViaWhatsApp(pdfUrl, filename) {
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    const text = `Liste des cotisations - ${monthNames[currentMonth]} ${currentYear} - ANSAR ALMOUYASSAR`;
+    
+    // Créer un lien temporaire pour le téléchargement
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    
+    // Pour WhatsApp, on ne peut pas partager directement un fichier, on partage le lien de téléchargement
+    window.open(`https://wa.me/?text=${encodeURIComponent(text + ' - Téléchargez le PDF: ' + window.location.origin)}`, '_blank');
+    
+    document.body.removeChild(link);
+    closeShareMenu();
+}
+
+// Fonction pour partager par email
+function shareViaEmail(pdfUrl, filename) {
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    const subject = `Liste des cotisations - ${monthNames[currentMonth]} ${currentYear}`;
+    const body = `Veuillez trouver ci-joint la liste des cotisations pour ${monthNames[currentMonth]} ${currentYear}.\n\nANSAR ALMOUYASSAR`;
+    
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    closeShareMenu();
+}
+
+// Fonction pour télécharger le PDF
+function downloadPDF(pdfUrl, filename) {
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    closeShareMenu();
+}
+
+// Fonction pour fermer le menu de partage
+function closeShareMenu() {
+    const overlay = document.getElementById('shareOverlay');
+    const shareMenu = document.querySelector('div[style*="z-index: 10000"]');
+    
+    if (overlay) overlay.remove();
+    if (shareMenu) shareMenu.remove();
+}
+      
+      
+      
 // Fonction pour imprimer les résultats
 function printResults() {
     const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
