@@ -1066,8 +1066,8 @@
         <button class="action-btn" onclick="printResults()">
             <i class="fas fa-print"></i> Imprimer
         </button>
-       <button class="action-btn" onclick="shareResults()">
-        <i class="fas fa-share-alt"></i> Partager
+       <button class="action-btn" onclick="downloadPDF()">
+        <i class="fas fa-download"></i> Télécharger PDF
     </button>
     </div>
     
@@ -2158,6 +2158,192 @@ function updatePublicDisplay() {
                 }
             });
         });
+      
+      
+      // Fonction pour télécharger en PDF
+function downloadPDF() {
+    // Générer le contenu du PDF
+    const pdfContent = generatePDFContent();
+    
+    // Créer un élément temporaire pour le contenu
+    const element = document.createElement('div');
+    element.innerHTML = pdfContent;
+    document.body.appendChild(element);
+    
+    // Options pour html2pdf
+    const options = {
+        margin: [10, 10, 10, 10],
+        filename: `cotisations_${getCurrentMonthName()}_${currentYear}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true,
+            logging: true,
+            letterRendering: true
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait' 
+        }
+    };
+    
+    // Générer le PDF
+    html2pdf()
+        .set(options)
+        .from(element)
+        .toPdf()
+        .get('pdf')
+        .then(function(pdf) {
+            // Sauvegarder le PDF
+            pdf.save(options.filename);
+            // Nettoyer: supprimer l'élément temporaire
+            document.body.removeChild(element);
+        })
+        .catch(function(error) {
+            console.error('Erreur lors de la génération du PDF:', error);
+            alert('Une erreur est survenue lors de la génération du PDF.');
+            // Nettoyer en cas d'erreur
+            if (document.body.contains(element)) {
+                document.body.removeChild(element);
+            }
+        });
+}
+// Fonction pour générer le contenu du PDF
+function generatePDFContent() {
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('fr-FR');
+    const timeStr = now.toLocaleTimeString('fr-FR');
+    
+    let content = `
+        <div style="font-family: Arial, sans-serif; color: black; padding: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #073332; padding-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="https://i.postimg.cc/ZYXhnnbN/logo.png" alt="Logo ANSAR" style="width: 60px; height: 60px;">
+                    <div style="font-weight: bold; font-size: 20px; color: #073332;">ANSAR ALMOUYASSAR</div>
+                </div>
+                <div style="font-size: 12px;">Généré le ${dateStr} à ${timeStr}</div>
+            </div>
+            
+            <div style="text-align: center; font-size: 18px; font-weight: bold; margin: 15px 0; color: #073332; padding: 8px; background-color: #f5f5f5; border-radius: 4px;">
+                LISTE DES COTISATIONS - ${monthNames[currentMonth]} ${currentYear}
+            </div>
+    `;
+    
+    // Membres cotisés
+    const monthKey = `${currentYear}-${currentMonth}`;
+    let paidCount = 0;
+    let paidMembers = [];
+    
+    members.forEach(member => {
+        const hasPaid = member.contributions && member.contributions[monthKey];
+        if (hasPaid) {
+            paidCount++;
+            paidMembers.push(member);
+        }
+    });
+    
+    content += `
+        <div style="font-size: 14px; margin: 12px 0 8px 0; color: #073332; font-weight: bold;">MEMBRES COTISÉS (${paidCount})</div>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
+            <tr>
+                <th style="background-color: #073332; color: white; padding: 8px; text-align: left;">N°</th>
+                <th style="background-color: #073332; color: white; padding: 8px; text-align: left;">Nom & Prénom</th>
+                <th style="background-color: #073332; color: white; padding: 8px; text-align: left;">Code</th>
+            </tr>
+    `;
+    
+    if (paidCount > 0) {
+        paidMembers.forEach((member, index) => {
+            content += `
+                <tr style="background-color: #d4f0d4;">
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${index + 1}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${member.firstname} ${member.lastname}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${member.code}</td>
+                </tr>
+            `;
+        });
+    } else {
+        content += `
+            <tr style="background-color: #d4f0d4;">
+                <td colspan="3" style="padding: 6px; border-bottom: 1px solid #ddd; text-align: center;">Aucun membre cotisé pour ce mois</td>
+            </tr>
+        `;
+    }
+    
+    content += `</table>`;
+    
+    // Membres non cotisés
+    let unpaidCount = 0;
+    let unpaidMembers = [];
+    
+    members.forEach(member => {
+        const hasPaid = member.contributions && member.contributions[monthKey];
+        if (!hasPaid) {
+            unpaidCount++;
+            unpaidMembers.push(member);
+        }
+    });
+    
+    content += `
+        <div style="font-size: 14px; margin: 12px 0 8px 0; color: #073332; font-weight: bold;">MEMBRES NON COTISÉS (${unpaidCount})</div>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
+            <tr>
+                <th style="background-color: #073332; color: white; padding: 8px; text-align: left;">N°</th>
+                <th style="background-color: #073332; color: white; padding: 8px; text-align: left;">Nom & Prénom</th>
+                <th style="background-color: #073332; color: white; padding: 8px; text-align: left;">Code</th>
+            </tr>
+    `;
+    
+    if (unpaidCount > 0) {
+        unpaidMembers.forEach((member, index) => {
+            content += `
+                <tr style="background-color: #ffcccc;">
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${index + 1}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${member.firstname} ${member.lastname}</td>
+                    <td style="padding: 6px; border-bottom: 1px solid #ddd;">${member.code}</td>
+                </tr>
+            `;
+        });
+    } else {
+        content += `
+            <tr style="background-color: #ffcccc;">
+                <td colspan="3" style="padding: 6px; border-bottom: 1px solid #ddd; text-align: center;">Tous les membres sont cotisés pour ce mois</td>
+            </tr>
+        `;
+    }
+    
+    content += `</table>`;
+    
+    // Footer avec les informations de contact
+    content += `
+        <div style="margin-top: 30px; font-size: 10px; text-align: center; color: #555; border-top: 1px solid #ccc; padding-top: 10px;">
+            <div style="margin-top: 8px; line-height: 1.4;">
+                <p style="margin: 4px 0;"><strong>POUR TOUS RÉCLAMATIONS VEUILLEZ CONTACTER :</strong></p>
+                <p style="margin: 4px 0;">Le Trésorier Général responsable des cotisations : MOUHIDINE NIASS - 77 184 77 37</p>
+                <p style="margin: 4px 0;">La Trésorière : OUREY DIONE - 77 290 08 08</p>   
+                <p style="margin: 4px 0;">Compte WAVE et Orange Money de ANSAR : +221 77 290 08 08</p>
+                <p style="margin: 4px 0;">Ou bien payer directement dans votre application dans votre page personnelle</p>
+                <p style="margin: 4px 0;"><strong>ENSEMBLE, SOYONS RÉGULIERS POUR CONTRIBUER AU BON DÉVELOPPEMENT DE NOTRE ASSOCIATION</strong></p>
+            </div>
+        </div>
+    `;
+    
+    content += `</div>`;
+    
+    return content;
+}
+
+// Fonction utilitaire pour obtenir le nom du mois actuell
+function getCurrentMonthName() {
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    return monthNames[currentMonth];
+}
     </script>
+  <!-- Contenu caché pour la génération du PDF -->
+<div id="pdfContent" class="pdf-content" style="display: none;"></div>
+
+</body>
 </body>
 </html>
