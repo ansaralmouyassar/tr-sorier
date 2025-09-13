@@ -1349,7 +1349,12 @@ function backToCotisations() {
     document.getElementById('resultsPanel').style.display = 'none';
     document.getElementById('cotisationsPanel').style.display = 'block';
 }
-
+// Fonction pour fermer le panel des résultats
+function closeResults() {
+    document.getElementById('resultsPanel').style.display = 'none';
+    document.getElementById('resultsOverlay').style.display = 'none';
+    document.getElementById('cotisationsPanel').style.display = 'block';
+}
 // Imprimer les résultats
 function printResults() {
     const originalContents = document.body.innerHTML;
